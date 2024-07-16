@@ -1,151 +1,184 @@
 use std::collections::HashSet;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-// Define a basic Block structure
+// Taupānga i te Tauira Pūrotu
 #[derive(Debug, Clone)]
-struct Block {
-    index: u64,
-    timestamp: u64,
-    data: Vec<Transaction>,
-    prev_hash: String,
+struct Pūrotu {
+    tohu: u64,
+    wātaka: u64,
+    raraunga: Vec<Hoko>,
+    tawhito_whakamutunga: String,
     nonce: u64,
 }
 
-// Transaction structure
+// Tauira Hoko
 #[derive(Debug, Clone)]
-struct Transaction {
-    sender: String,
-    receiver: String,
-    amount: u64,
+struct Hoko {
+    kaituku: String,
+    kaiwhiwhi: String,
+    moni: u64,
 }
 
-// Validator structure for Proof of Stake
+// Rōpū Whakamana mō te Rite Whakamāori
 #[derive(Debug, Clone)]
-struct Validator {
-    address: String,
-    balance: u64,
+struct Whakamana {
+    wāhitau: String,
+    moni: u64,
 }
 
-// Blockchain structure
+// Pūrotu Pūraurau
 #[derive(Debug)]
-struct Blockchain {
-    chain: Vec<Block>,
-    current_transactions: Vec<Transaction>,
-    validators: Vec<Validator>,
-    difficulty: usize,
+struct PūrotuPūraurau {
+    taura: Vec<Pūrotu>,
+    hoko_ā-nāianei: Vec<Hoko>,
+    whakamana: Vec<Whakamana>,
+    uaua: usize,
 }
 
-impl Blockchain {
-    // Constructor
-    fn new(difficulty: usize) -> Self {
-        let mut blockchain = Blockchain {
-            chain: Vec::new(),
-            current_transactions: Vec::new(),
-            validators: Vec::new(),
-            difficulty,
+impl PūrotuPūraurau {
+    // Kaitautoko
+    fn hōmai(uaua: usize) -> Self {
+        let mut pūrotu_pūraurau = PūrotuPūraurau {
+            taura: Vec::new(),
+            hoko_ā-nāianei: Vec::new(),
+            whakamana: Vec::new(),
+            uaua,
         };
-        blockchain.add_genesis_block();
-        blockchain
+        pūrotu_pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko();
+        pūrotu_pūraurau
     }
 
-    // Function to add genesis block
-    fn add_genesis_block(&mut self) {
-        let genesis_block = Block {
-            index: 0,
-            timestamp: Self::timestamp(),
-            data: vec![],
-            prev_hash: String::from("0"),
-            nonce: 0,
+    // Tāpiri i te pūtahi tūmomo
+    fn tāpiri_pūtahi(&mut self, hoko: Hoko) {
+        self.hoko_ā-nāianei.push(hoko);
+    }
+
+    // Tāpiri i te pūtahi tūmomo whakamutanga mō te hoko
+    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self) {
+        let hoko_tūmomo = Hoko {
+            kaituku: String::from("Kaituku"),
+            kaiwhiwhi: String::from("Kaiwhiwhi"),
+            moni: 0,
         };
-        self.chain.push(genesis_block);
-    }
-
-    // Function to add transaction to current transactions
-    fn add_transaction(&mut self, transaction: Transaction) {
-        self.current_transactions.push(transaction);
-    }
-
-    // Function to create a new block using Proof of Work
-    fn proof_of_work(&self, last_block: &Block) -> Block {
-        let mut nonce = 0;
-        let mut hash = Self::calculate_hash(last_block);
-
-        while !hash.starts_with(&format!("{:0<width$}", "", width = self.difficulty)) {
-            nonce += 1;
-            hash = Self::calculate_hash(&Block {
-                index: last_block.index + 1,
-                timestamp: Self::timestamp(),
-                data: self.current_transactions.clone(),
-                prev_hash: hash.clone(),
-                nonce,
-            });
-        }
-
-        Block {
-            index: last_block.index + 1,
-            timestamp: Self::timestamp(),
-            data: self.current_transactions.clone(),
-            prev_hash: last_block.prev_hash.clone(),
-            nonce,
-        }
-    }
-
-    // Function to add block to blockchain
-    fn add_block(&mut self, block: Block) {
-        self.chain.push(block);
-        self.current_transactions = Vec::new();
-    }
-
-    // Function to add validator for Proof of Stake
-    fn add_validator(&mut self, address: String, balance: u64) {
-        self.validators.push(Validator { address, balance });
-    }
-
-    // Helper function to calculate hash (SHA-256 placeholder)
-    fn calculate_hash(block: &Block) -> String {
-        // Placeholder implementation (replace with actual hash function)
-        unimplemented!()
-    }
-
-    // Helper function to get current timestamp
-    fn timestamp() -> u64 {
-        SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time went backwards")
-            .as_secs()
+        self.tāpiri_pūtahi(hoko_tūmomo);
     }
 }
 
-// Main function for demonstrating usage
+// Kaitūmuaki mō te Rōpū Raraunga
+#[derive(Debug, Clone)]
+struct RōpūRaraunga {
+    taura: Vec<Pūrotu>,
+    hoko_ā-nāianei: Vec<Hoko>,
+    whakamana: Vec<Whakamana>,
+    uaua: usize,
+}
+
+impl RōpūRaraunga {
+    // Kaitautoko
+    fn hōmai(uaua: usize) -> Self {
+        let mut rōpū_raraunga = RōpūRaraunga {
+            taura: Vec::new(),
+            hoko_ā-nāianei: Vec::new(),
+            whakamana: Vec::new(),
+            uaua,
+        };
+        rōpū_raraunga.tāpiri_tūmomo_whakamutanga_mōtehoko();
+        rōpū_raraunga
+    }
+
+    // Tāpiri i te pūtahi tūmomo
+    fn tāpiri_pūtahi(&mut self, hoko: Hoko) {
+        self.hoko_ā-nāianei.push(hoko);
+    }
+
+    // Tāpiri i te pūtahi tūmomo whakamutanga mō te hoko
+    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self) {
+        let hoko_tūmomo = Hoko {
+            kaituku: String::from("Kaituku"),
+            kaiwhiwhi: String::from("Kaiwhiwhi"),
+            moni: 0,
+        };
+        self.tāpiri_pūtahi(hoko_tūmomo);
+    }
+}
+
+// Taupānga Pūraurau
+#[derive(Debug)]
+struct Pūraurau {
+    taura: Vec<Pūrotu>,
+    hoko_ā-nāianei: Vec<Hoko>,
+    whakamana: Vec<Whakamana>,
+    uaua: usize,
+}
+
+impl Pūraurau {
+    // Kaitautoko
+    fn hōmai(uaua: usize) -> Self {
+        let mut pūraurau = Pūraurau {
+            taura: Vec::new(),
+            hoko_ā-nāianei: Vec::new(),
+            whakamana: Vec::new(),
+            uaua,
+        };
+        pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko();
+        pūraurau
+    }
+
+    // Tāpiri i te pūtahi tūmomo
+    fn tāpiri_pūtahi(&mut self, hoko: Hoko) {
+        self.hoko_ā-nāianei.push(hoko);
+    }
+
+    // Tāpiri i te pūtahi tūmomo whakamutanga mō te hoko
+    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self) {
+        let hoko_tūmomo = Hoko {
+            kaituku: String::from("Kaituku"),
+            kaiwhiwhi: String::from("Kaiwhiwhi"),
+            moni: 0,
+        };
+        self.tāpiri_pūtahi(hoko_tūmomo);
+    }
+}
+
+fn whakamana(&mut rōpūraraunga, wāhanga: Pūrotu) {
+    rōpūraraunga.taura.push(wāhanga);
+}
+
+fn tūmomo_hoko() -> Hoko {
+    Hoko {
+        kaituku: String::from("Kaituku"),
+        kaiwhiwhi: String::from("Kaiwhiwhi"),
+        moni: 0,
+    }
+}
+
+fn whakamana_rahinga() -> Whakamana {
+    Whakamana {
+        wāhitau: String::from("Wāhitau"),
+        moni: 0,
+    }
+}
+
 fn main() {
-    // Initialize blockchain with difficulty level
-    let mut blockchain = Blockchain::new(4);
+    // Timata pūraurau me te taumaha uaua
+    let mut pūraurau = Pūraurau::hōmai(4);
 
-    // Add validators for Proof of Stake
-    blockchain.add_validator(String::from("Validator1"), 100);
-    blockchain.add_validator(String::from("Validator2"), 200);
+    // Tāpiri kaitautoko mō te Rite Whakamāori
+    whakamana(&mut pūraurau, Pūrotu::tāpiri_tūmomo_whakamutanga_mōtehoko("Rite Whakamāori 1"), 100);
+    whakamana(&mut pūraurau, Pūrotu::tāpiri_tūmomo_whakamutanga_mōtehoko("Rite Whakamāori 2"), 200);
 
-    // Add transactions to current transactions
-    let transaction1 = Transaction {
-        sender: String::from("Alice"),
-        receiver: String::from("Bob"),
-        amount: 50,
-    };
-    blockchain.add_transaction(transaction1.clone());
+    // Tāpiri tūmomomomo ki ngā tūmomo o nāianei
+    let tūmomo1 = tūmomo_hoko();
+    pūraurau.tāpiri_pūtahi(tūmomo1.clone());
 
-    let transaction2 = Transaction {
-        sender: String::from("Bob"),
-        receiver: String::from("Alice"),
-        amount: 30,
-    };
-    blockchain.add_transaction(transaction2.clone());
+    let tūmomo2 = tūmomo_hoko();
+    pūraurau.tāpiri_pūtahi(tūmomo2.clone());
 
-    // Mine a new block using Proof of Work
-    let last_block = blockchain.chain.last().unwrap();
-    let new_block_pow = blockchain.proof_of_work(last_block);
-    blockchain.add_block(new_block_pow);
+    // Kī kia whakaatuhia he pūrotu hōu mā te Rite Whakamāori
+    let raro = pūraurau.taura.hoatohanga(0).unwrap();
+    let rōpūraraunga_rua = Pūrotu::tūmomo_hoko(raro);
 
-    // Output blockchain and validators
-    println!("Blockchain: {:#?}", blockchain.chain);
-    println!("Validators: {:#?}", blockchain.validators);
+    // Mōhiohio whakamutunga rōpū me ngā kaitautoko
+    println!("Rōpū Raraunga: {:#?}", pūraurau.taura);
+    println!("Kaitautoko: {:#?}", pūraurau.whakamana);
 }
