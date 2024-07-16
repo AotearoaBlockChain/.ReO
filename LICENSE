@@ -1,5 +1,47 @@
-Private and Non-Sublicensable License
+Te Ao Marama Open Source License
 
-Permission is hereby granted to the recipient of this software (the "Licensee"), provided that this software and associated documentation files (the "Software") are used for personal or internal purposes only. The Licensee may not sublicense, sell, lease, rent, distribute, or otherwise transfer the Software or any portion thereof to any third party without prior written consent from the Licensor.
+Version 1.0, July 2024
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This license permits use, reproduction, and distribution of the licensed material in accordance with the following terms:
+
+Section 1: Definitions
+
+- "Licensed Material" means the software, documentation, and any other related material governed by this license.
+- "Contributor" means any individual or legal entity who modifies or contributes to the Licensed Material.
+- "Maori Cultural Values" refers to the principles and practices of the Maori people of Aotearoa New Zealand, including but not limited to tikanga (customs), matauranga (knowledge), and taonga (treasures).
+- "He Whakaputanga" refers to the Declaration of Independence of New Zealand, signed by various Maori chiefs in 1835, asserting Maori sovereignty and autonomy.
+- "Treaty of Waitangi 1840" refers to the Treaty of Waitangi as it was originally written in English in 1840, establishing relationships between Maori and the British Crown, particularly Article 2.
+- "Treaty of Waitangi 1840 Reo Version" refers to the Treaty of Waitangi as it was originally written in te reo Maori in 1840.
+- "Aotearoa Blockchain" refers to the Blockchain Ecosystem developed using .ReO programming language, tailored to the needs and requirements of Aotearoa (New Zealand), and reflecting the diverse nature of tikanga throughout different hapu.
+
+Section 2: Grant of Rights
+
+1. Use and Distribution: Permission is hereby granted, free of charge, to any person obtaining a copy of this Licensed Material, to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Licensed Material, subject to the conditions stated in this license.
+2. Inclusion of License: All copies or substantial portions of the Licensed Material must include a copy of this license.
+
+Section 3: Maori Cultural Respect
+
+1. Cultural Acknowledgment: Any use, reproduction, or distribution of the Licensed Material must include acknowledgment of the Maori cultural values and contributions. This acknowledgment should be prominently displayed in the documentation and user interfaces of any derivative works.
+2. Protection of Taonga: Contributors must respect and protect Maori taonga (treasures) and matauranga (knowledge). This includes refraining from using the Licensed Material in a manner that would harm, exploit, or misappropriate Maori cultural heritage.
+3. Consultation and Collaboration: When the Licensed Material incorporates Maori cultural elements, Contributors are encouraged to consult with relevant Maori communities or representatives to ensure respectful and appropriate use.
+
+Section 4: Legal Considerations
+
+1. Sovereign Capacity: This license is governed by and construed in accordance with the laws reflecting the sovereign capacity of the confederated tribes and the collective hapu of Aotearoa New Zealand.
+2. Treaty of Waitangi: The provisions of the Treaty of Waitangi 1840, particularly Article 2, regarding the protection of Maori rights to their taonga, are acknowledged and respected in the use and distribution of the Licensed Material.
+3. He Whakaputanga: The principles and assertions of He Whakaputanga, asserting Maori sovereignty and autonomy, are acknowledged and respected in the use and distribution of the Licensed Material.
+
+Section 5: Limitation of Liability
+
+The Licensed Material is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the Contributors be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the Licensed Material or the use or other dealings in the Licensed Material.
+
+Section 6: Termination
+
+1. Violation of Terms: If you violate the terms of this license, your rights under this license will terminate automatically.
+2. Effect of Termination: Upon termination, you must cease all use and distribution of the Licensed Material and destroy all copies of it in your possession or control.
+
+Section 7: Contribution Back
+
+By contributing to the Licensed Material, you grant the right to use your contributions under the terms of this license. You represent that you have the right to grant this license.
+
+Copyright Te Rārangi Pōka, July 2024
