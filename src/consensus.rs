@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-// Taupānga i te Tauira Pūrotu
+// Taupānga mō te Tauira Pūrotu
 #[derive(Debug, Clone)]
 struct Pūrotu {
     tohu: u64,
@@ -140,8 +140,8 @@ impl Pūraurau {
     }
 }
 
-fn whakamana(&mut rōpūraraunga, wāhanga: Pūrotu) {
-    rōpūraraunga.taura.push(wāhanga);
+fn whakamana(rōpūraraunga: &mut RōpūRaraunga, taura: Pūrotu) {
+    rōpūraraunga.taura.push(taura);
 }
 
 fn tūmomo_hoko() -> Hoko {
@@ -160,7 +160,7 @@ fn whakamana_rahinga() -> Whakamana {
 }
 
 fn main() {
-    // Timata pūraurau me te taumaha uaua
+    // Timata Pūraurau me te taumaha uaua
     let mut pūraurau = Pūraurau::hōmai(4);
 
     // Tāpiri kaitautoko mō te Rite Whakamāori
@@ -175,10 +175,10 @@ fn main() {
     pūraurau.tāpiri_pūtahi(tūmomo2.clone());
 
     // Kī kia whakaatuhia he pūrotu hōu mā te Rite Whakamāori
-    let raro = pūraurau.taura.hoatohanga(0).unwrap();
+    let raro = pūraurau.taura.get(0).unwrap();
     let rōpūraraunga_rua = Pūrotu::tūmomo_hoko(raro);
 
-    // Mōhiohio whakamutunga rōpū me ngā kaitautoko
+    // Whakaatu rōpū raraunga me ngā kaitautoko
     println!("Rōpū Raraunga: {:#?}", pūraurau.taura);
     println!("Kaitautoko: {:#?}", pūraurau.whakamana);
 }
