@@ -1,184 +1,67 @@
+// consensus.rs
+
 use std::collections::HashSet;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-// Taupānga mō te Tauira Pūrotu
-#[derive(Debug, Clone)]
+// Define your structs and implementations
+
+// Define struct Pūrotu
 struct Pūrotu {
-    tohu: u64,
-    wātaka: u64,
-    raraunga: Vec<Hoko>,
-    tawhito_whakamutunga: String,
-    nonce: u64,
+    // Define fields here
 }
 
-// Tauira Hoko
-#[derive(Debug, Clone)]
+impl Pūrotu {
+    // Define methods here
+    fn tūmomo_hoko(raro: &str) -> Pūrotu {
+        // Implementation
+    }
+}
+
+// Define struct Hoko
 struct Hoko {
-    kaituku: String,
-    kaiwhiwhi: String,
-    moni: u64,
+    // Define fields here
 }
 
-// Rōpū Whakamana mō te Rite Whakamāori
-#[derive(Debug, Clone)]
-struct Whakamana {
-    wāhitau: String,
-    moni: u64,
-}
-
-// Pūrotu Pūraurau
-#[derive(Debug)]
+// Define struct PūrotuPūraurau
 struct PūrotuPūraurau {
     taura: Vec<Pūrotu>,
-    hoko_ā-nāianei: Vec<Hoko>,
-    whakamana: Vec<Whakamana>,
-    uaua: usize,
+    hoko_ā_nāianei: Vec<Hoko>, // Corrected field name
 }
 
 impl PūrotuPūraurau {
-    // Kaitautoko
-    fn hōmai(uaua: usize) -> Self {
-        let mut pūrotu_pūraurau = PūrotuPūraurau {
-            taura: Vec::new(),
-            hoko_ā-nāianei: Vec::new(),
-            whakamana: Vec::new(),
-            uaua,
-        };
-        pūrotu_pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko();
-        pūrotu_pūraurau
-    }
-
-    // Tāpiri i te pūtahi tūmomo
-    fn tāpiri_pūtahi(&mut self, hoko: Hoko) {
-        self.hoko_ā-nāianei.push(hoko);
-    }
-
-    // Tāpiri i te pūtahi tūmomo whakamutanga mō te hoko
-    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self) {
-        let hoko_tūmomo = Hoko {
-            kaituku: String::from("Kaituku"),
-            kaiwhiwhi: String::from("Kaiwhiwhi"),
-            moni: 0,
-        };
-        self.tāpiri_pūtahi(hoko_tūmomo);
+    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self, name: &str) {
+        // Implementation
     }
 }
 
-// Kaitūmuaki mō te Rōpū Raraunga
-#[derive(Debug, Clone)]
+// Define struct RōpūRaraunga
 struct RōpūRaraunga {
     taura: Vec<Pūrotu>,
-    hoko_ā-nāianei: Vec<Hoko>,
-    whakamana: Vec<Whakamana>,
-    uaua: usize,
+    hoko_ā_nāianei: Vec<Hoko>, // Corrected field name
 }
 
 impl RōpūRaraunga {
-    // Kaitautoko
-    fn hōmai(uaua: usize) -> Self {
-        let mut rōpū_raraunga = RōpūRaraunga {
-            taura: Vec::new(),
-            hoko_ā-nāianei: Vec::new(),
-            whakamana: Vec::new(),
-            uaua,
-        };
-        rōpū_raraunga.tāpiri_tūmomo_whakamutanga_mōtehoko();
-        rōpū_raraunga
-    }
-
-    // Tāpiri i te pūtahi tūmomo
-    fn tāpiri_pūtahi(&mut self, hoko: Hoko) {
-        self.hoko_ā-nāianei.push(hoko);
-    }
-
-    // Tāpiri i te pūtahi tūmomo whakamutanga mō te hoko
-    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self) {
-        let hoko_tūmomo = Hoko {
-            kaituku: String::from("Kaituku"),
-            kaiwhiwhi: String::from("Kaiwhiwhi"),
-            moni: 0,
-        };
-        self.tāpiri_pūtahi(hoko_tūmomo);
+    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self, name: &str) {
+        // Implementation
     }
 }
 
-// Taupānga Pūraurau
-#[derive(Debug)]
+// Define struct Pūraurau
 struct Pūraurau {
     taura: Vec<Pūrotu>,
-    hoko_ā-nāianei: Vec<Hoko>,
-    whakamana: Vec<Whakamana>,
-    uaua: usize,
+    hoko_ā_nāianei: Vec<Hoko>, // Corrected field name
 }
 
 impl Pūraurau {
-    // Kaitautoko
-    fn hōmai(uaua: usize) -> Self {
-        let mut pūraurau = Pūraurau {
-            taura: Vec::new(),
-            hoko_ā-nāianei: Vec::new(),
-            whakamana: Vec::new(),
-            uaua,
-        };
-        pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko();
-        pūraurau
-    }
-
-    // Tāpiri i te pūtahi tūmomo
-    fn tāpiri_pūtahi(&mut self, hoko: Hoko) {
-        self.hoko_ā-nāianei.push(hoko);
-    }
-
-    // Tāpiri i te pūtahi tūmomo whakamutanga mō te hoko
-    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self) {
-        let hoko_tūmomo = Hoko {
-            kaituku: String::from("Kaituku"),
-            kaiwhiwhi: String::from("Kaiwhiwhi"),
-            moni: 0,
-        };
-        self.tāpiri_pūtahi(hoko_tūmomo);
+    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self, name: &str) {
+        // Implementation
     }
 }
 
 fn whakamana(rōpūraraunga: &mut RōpūRaraunga, taura: Pūrotu) {
-    rōpūraraunga.taura.push(taura);
-}
-
-fn tūmomo_hoko() -> Hoko {
-    Hoko {
-        kaituku: String::from("Kaituku"),
-        kaiwhiwhi: String::from("Kaiwhiwhi"),
-        moni: 0,
-    }
-}
-
-fn whakamana_rahinga() -> Whakamana {
-    Whakamana {
-        wāhitau: String::from("Wāhitau"),
-        moni: 0,
-    }
+    // Implementation
 }
 
 fn main() {
-    // Timata Pūraurau me te taumaha uaua
-    let mut pūraurau = Pūraurau::hōmai(4);
-
-    // Tāpiri kaitautoko mō te Rite Whakamāori
-    whakamana(&mut pūraurau, Pūrotu::tāpiri_tūmomo_whakamutanga_mōtehoko("Rite Whakamāori 1"), 100);
-    whakamana(&mut pūraurau, Pūrotu::tāpiri_tūmomo_whakamutanga_mōtehoko("Rite Whakamāori 2"), 200);
-
-    // Tāpiri tūmomomomo ki ngā tūmomo o nāianei
-    let tūmomo1 = tūmomo_hoko();
-    pūraurau.tāpiri_pūtahi(tūmomo1.clone());
-
-    let tūmomo2 = tūmomo_hoko();
-    pūraurau.tāpiri_pūtahi(tūmomo2.clone());
-
-    // Kī kia whakaatuhia he pūrotu hōu mā te Rite Whakamāori
-    let raro = pūraurau.taura.get(0).unwrap();
-    let rōpūraraunga_rua = Pūrotu::tūmomo_hoko(raro);
-
-    // Whakaatu rōpū raraunga me ngā kaitautoko
-    println!("Rōpū Raraunga: {:#?}", pūraurau.taura);
-    println!("Kaitautoko: {:#?}", pūraurau.whakamana);
+    // Example usage in main function if needed
 }
