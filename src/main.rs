@@ -1,47 +1,51 @@
+// main.rs
+
 mod interpretation;
 mod compile;
 mod manage;
-mod consensus; // Include your consensus.rs file
+mod consensus; // Make sure to import consensus.rs
+
+use crate::consensus::{PūrotuPūraurau, RōpūRaraunga, Pūraurau}; // Adjust based on your file structure
 
 fn main() {
-    let command = "rerehangu"; // Example command, you can replace this with actual input
+    let command = "rerehangu"; // Example command, replace with actual input
     interpretation::interpret(command);
 
-    let script = "example script"; // Example script, you can replace this with actual script
+    let script = "example script"; // Example script, replace with actual script
     compile::compile(script);
     manage::run(script);
     manage::debug(script);
     manage::test(script);
 
-    // Example usage of blockchain logic from consensus.rs
-    // Initialize blockchain with difficulty level
-    let mut blockchain = consensus::Blockchain::new(4);
-
-    // Add validators for Proof of Stake
-    blockchain.add_validator(String::from("Validator1"), 100);
-    blockchain.add_validator(String::from("Validator2"), 200);
-
-    // Add transactions to current transactions
-    let transaction1 = consensus::Transaction {
-        sender: String::from("Alice"),
-        receiver: String::from("Bob"),
-        amount: 50,
+    // Example usage of structs and methods
+    let mut pūrotu_pūraurau = PūrotuPūraurau {
+        taura: Vec::new(),
+        hoko_ā_nāianei: Vec::new(),
     };
-    blockchain.add_transaction(transaction1.clone());
 
-    let transaction2 = consensus::Transaction {
-        sender: String::from("Bob"),
-        receiver: String::from("Alice"),
-        amount: 30,
+    pūrotu_pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko("example_name");
+
+    // Example usage of RōpūRaraunga
+    let mut rōpū_raraunga = RōpūRaraunga {
+        taura: Vec::new(),
+        hoko_ā_nāianei: Vec::new(),
     };
-    blockchain.add_transaction(transaction2.clone());
 
-    // Mine a new block using Proof of Work
-    let last_block = blockchain.chain.last().unwrap();
-    let new_block_pow = blockchain.proof_of_work(last_block);
-    blockchain.add_block(new_block_pow);
+    rōpū_raraunga.tāpiri_tūmomo_whakamutanga_mōtehoko("example_name");
 
-    // Output blockchain and validators
-    println!("Blockchain: {:#?}", blockchain.chain);
-    println!("Validators: {:#?}", blockchain.validators);
+    // Example usage of Pūraurau
+    let mut pūraurau = Pūraurau {
+        taura: Vec::new(),
+        hoko_ā_nāianei: Vec::new(),
+    };
+
+    pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko("example_name");
+
+    // Example usage of whakamana function
+    let taura = Pūrotu { /* Define Pūrotu fields */ };
+    whakamana(&mut rōpū_raraunga, taura);
+
+    // Example usage of Blockchain if implemented
+    // let mut blockchain = consensus::Blockchain::new(4);
+    // Adjust according to your blockchain implementation
 }
