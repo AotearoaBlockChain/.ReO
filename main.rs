@@ -2,13 +2,30 @@ mod interpretation;
 mod compile;
 mod manage;
 
-fn main() {
-    let command = "rerehāngū"; // Example command, you can replace this with actual input
-    interpretation::interpret(command);
+use std::fs;
 
-    let script = "example script"; // Example script, you can replace this with actual script
-    compile::compile(script);
-    manage::run(script);
-    manage::debug(script);
-    manage::test(script);
+fn main() {
+    // Read the test script from the file
+    let script = fs::read_to_string("test.reo")
+        .expect("Unable to read file");
+
+    // Split the script into lines
+    let lines: Vec<&str> = script.lines().collect();
+
+    // Interpret each line
+    for line in lines {
+        interpretation::interpret(line);
+    }
+
+    // Compile the script
+    compile::compile(&script);
+
+    // Run the script
+    manage::run(&script);
+
+    // Debug the script
+    manage::debug(&script);
+
+    // Test the script
+    manage::test(&script);
 }
