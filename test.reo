@@ -1,0 +1,18 @@
+rerehāngū tau a = 5
+rerehāngū rarangi b = "Kia ora"
+mena (a nui ake i te 10) {
+    karanga("Nui ake i te 10")
+} ranei {
+    karanga("Iti iho, rite rānei ki te 10")
+}
+
+waihanga_whitinga("sender_address", "receiver_address", 10)
+waihanga_poka()
+
+mahi tāpiri(tau x, tau y) {
+    hoki x + y
+}
+
+tangoHapa {
+    karanga("Kua puta he hapa")
+}
