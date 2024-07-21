@@ -1,10 +1,9 @@
 // src/compile.rs
 
-// Ensure necessary structs and functions are public
-pub struct CompileStruct {
-    // Define fields here
+pub struct HangangaWhakahiato {
+    // Whakatakotoria ngā āpure i konei
 }
 
-pub fn compile_function() {
-    // Function body here
+pub fn mahi_whakahiato() {
+    // Tinana o te mahi i konei
 }
