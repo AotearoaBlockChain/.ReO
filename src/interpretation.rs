@@ -1,40 +1,40 @@
 // src/interpretation.rs
 
 pub struct TauiraHanganga {
-    // Whakatakotoria ngā āpure i konei
-    pub āpure1: String,
-    pub āpure2: i32,
+    // Whakatakotoria nga apure i konei
+    pub apure1: String,
+    pub apure2: i32,
 }
 
 pub fn tauira_mahi() {
     // Tinana o te mahi i konei
 }
 
-pub struct Whakamāramatanga {
-    // Whakatakotoria ngā āpure i konei
-    pub āpure1: String,
-    pub āpure2: i32,
+pub struct Whakamaamatanga {
+    // Whakatakotoria nga apure i konei
+    pub apure1: String,
+    pub apure2: i32,
 }
 
-impl Whakamāramatanga {
-    pub fn hou(āpure1: String, āpure2: i32) -> Self {
-        Whakamāramatanga { āpure1, āpure2 }
+impl Whakamaamatanga {
+    pub fn hou(apure1: String, apure2: i32) -> Self {
+        Whakamaamatanga { apure1, apure2 }
     }
 
-    pub fn whakamāramatia(&self) {
-        // Rautaki whakamāramatanga i konei
+    pub fn whakamamatia(&self) {
+        // Rautaki whakamamatanga i konei
     }
 }
 
-pub fn whakamāramatia_ngā_raraunga(raraunga: &str) -> Whakamāramatanga {
+pub fn whakamaramatia_nga_raraunga(raraunga: &str) -> Whakamaamatanga {
     // Tinana o te mahi i konei
-    Whakamāramatanga {
-        āpure1: raraunga.to_string(),
-        āpure2: raraunga.len() as i32,
+    Whakamaamatanga {
+        apure1: raraunga.to_string(),
+        apure2: raraunga.len() as i32,
     }
 }
 
-pub fn whakamāramatia_kōrero(command: &str) {
+pub fn whakamaramatia_korero(command: &str) {
     match command {
         "rerehangu" => println!("Variable declaration"),
         "tau" => println!("Number type"),
@@ -85,4 +85,4 @@ pub fn whakamāramatia_kōrero(command: &str) {
         "Whakatairanga_API-C++" => println!("Interoperate with C++"),
         _ => println!("Unknown command"),
     }
-    }
+}
