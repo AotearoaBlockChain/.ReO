@@ -3,33 +3,33 @@
 use std::collections::HashSet;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub struct Pūrotu {
-    // Whakatakotoria ngā āpure i konei
+pub struct Puropu {
+    // Whakatakotoria nga apure i konei
 }
 
-pub struct PūrotuPūraurau {
-    // Whakatakotoria ngā āpure i konei
+pub struct PuropuPuraurau {
+    // Whakatakotoria nga apure i konei
 }
 
-pub struct RōpūRaraunga {
-    // Whakatakotoria ngā āpure i konei
+pub struct RopuRaraunga {
+    // Whakatakotoria nga apure i konei
 }
 
-pub struct Pūraurau {
-    // Whakatakotoria ngā āpure i konei
+pub struct Puraurau {
+    // Whakatakotoria nga apure i konei
 }
 
-pub fn whakamana(rōpūraraunga: &mut RōpūRaraunga, taura: Pūrotu) {
+pub fn whakamana(ropu_raraunga: &mut RopuRaraunga, taura: Puropu) {
     // Tinana o te mahi i konei
 }
 
-pub fn tūmomo_hoko(raro: &str) -> Pūrotu {
+pub fn tumomo_hoko(raro: &str) -> Puropu {
     // Tinana o te mahi i konei
-    Pūrotu {
-        // Whakatakotoria ngā āpure i konei
+    Puropu {
+        // Whakatakotoria nga apure i konei
     }
 }
 
 pub fn tauira_mahi(ingoa: &str) {
-    let _ingoa = ingoa; // Aukati i te whakatūpato kore whakamahi
+    let _ingoa = ingoa; // Aukati i te whakatupato kore whakamahi
 }
