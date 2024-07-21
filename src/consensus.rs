@@ -1,67 +1,41 @@
-// consensus.rs
+// src/consensus.rs
 
 use std::collections::HashSet;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-// Define your structs and implementations
-
-// Define struct Pūrotu
-struct Pūrotu {
+// Define Pūrotu and make it public
+pub struct Pūrotu {
     // Define fields here
 }
 
-impl Pūrotu {
-    // Define methods here
-    fn tūmomo_hoko(raro: &str) -> Pūrotu {
-        // Implementation
-    }
-}
-
-// Define struct Hoko
-struct Hoko {
+// Define other structs and make them public
+pub struct PūrotuPūraurau {
     // Define fields here
 }
 
-// Define struct PūrotuPūraurau
-struct PūrotuPūraurau {
-    taura: Vec<Pūrotu>,
-    hoko_ā_nāianei: Vec<Hoko>, // Corrected field name
+pub struct RōpūRaraunga {
+    // Define fields here
 }
 
-impl PūrotuPūraurau {
-    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self, name: &str) {
-        // Implementation
+pub struct Pūraurau {
+    // Define fields here
+}
+
+// Define the function and make it public
+pub fn whakamana(rōpūraraunga: &mut RōpūRaraunga, taura: Pūrotu) {
+    // Function body here
+}
+
+// Define the function tūmomo_hoko and make it public
+pub fn tūmomo_hoko(raro: &str) -> Pūrotu {
+    // Function body here
+    // Ensure this function returns a Pūrotu instance
+    Pūrotu {
+        // Initialize fields here
     }
 }
 
-// Define struct RōpūRaraunga
-struct RōpūRaraunga {
-    taura: Vec<Pūrotu>,
-    hoko_ā_nāianei: Vec<Hoko>, // Corrected field name
-}
-
-impl RōpūRaraunga {
-    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self, name: &str) {
-        // Implementation
-    }
-}
-
-// Define struct Pūraurau
-struct Pūraurau {
-    taura: Vec<Pūrotu>,
-    hoko_ā_nāianei: Vec<Hoko>, // Corrected field name
-}
-
-impl Pūraurau {
-    fn tāpiri_tūmomo_whakamutanga_mōtehoko(&mut self, name: &str) {
-        // Implementation
-    }
-}
-
-fn whakamana(rōpūraraunga: &mut RōpūRaraunga, taura: Pūrotu) {
-    // Implementation
-}
-
-fn main() {
-    // Example usage in main function if needed
+// Placeholder methods, if any, should also be made public and addressed for unused warnings
+pub fn example_method(name: &str) {
+    let _name = name; // Prevent unused warning
 }
