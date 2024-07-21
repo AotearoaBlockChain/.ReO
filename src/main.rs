@@ -1,51 +1,32 @@
-// main.rs
+// src/main.rs
 
-mod interpretation;
 mod compile;
+mod consensus;
+mod interpretation;
 mod manage;
-mod consensus; // Make sure to import consensus.rs
 
-use crate::consensus::{PūrotuPūraurau, RōpūRaraunga, Pūraurau}; // Adjust based on your file structure
+use crate::consensus::{Pūrotu, RōpūRaraunga, whakamana, tūmomo_hoko};
+use crate::interpretation::ExampleStruct;
+use crate::manage::AnotherStruct;
 
 fn main() {
-    let command = "rerehangu"; // Example command, replace with actual input
-    interpretation::interpret(command);
-
-    let script = "example script"; // Example script, replace with actual script
-    compile::compile(script);
-    manage::run(script);
-    manage::debug(script);
-    manage::test(script);
-
-    // Example usage of structs and methods
-    let mut pūrotu_pūraurau = PūrotuPūraurau {
-        taura: Vec::new(),
-        hoko_ā_nāianei: Vec::new(),
-    };
-
-    pūrotu_pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko("example_name");
-
-    // Example usage of RōpūRaraunga
+    // Initialize your data here
     let mut rōpū_raraunga = RōpūRaraunga {
-        taura: Vec::new(),
-        hoko_ā_nāianei: Vec::new(),
+        // Initialize fields here
+    };
+    let taura = Pūrotu {
+        // Initialize fields here
     };
 
-    rōpū_raraunga.tāpiri_tūmomo_whakamutanga_mōtehoko("example_name");
-
-    // Example usage of Pūraurau
-    let mut pūraurau = Pūraurau {
-        taura: Vec::new(),
-        hoko_ā_nāianei: Vec::new(),
-    };
-
-    pūraurau.tāpiri_tūmomo_whakamutanga_mōtehoko("example_name");
-
-    // Example usage of whakamana function
-    let taura = Pūrotu { /* Define Pūrotu fields */ };
+    // Call the function
     whakamana(&mut rōpū_raraunga, taura);
 
-    // Example usage of Blockchain if implemented
-    // let mut blockchain = consensus::Blockchain::new(4);
-    // Adjust according to your blockchain implementation
+    // Use other functions and structs if needed
+    let example = ExampleStruct {
+        // Initialize fields here
+    };
+
+    let another = AnotherStruct {
+        // Initialize fields here
+    };
 }
