@@ -5,7 +5,7 @@ mod consensus;
 mod interpretation;
 mod manage;
 
-use crate::consensus::{Puropu, RopuRaraunga, whakamana, tumomo_hoko};
+use crate::consensus::{Purotu, RopuRaraunga, whakamana, tumomo_hoko};
 use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
 use crate::manage::HangangaKonae;
 
@@ -13,7 +13,7 @@ fn main() {
     let mut ropu_raraunga = RopuRaraunga {
         // Whakatakotoria nga apure i konei
     };
-    let taura = Puropu {
+    let taura = Purotu {
         // Whakatakotoria nga apure i konei
     };
 
