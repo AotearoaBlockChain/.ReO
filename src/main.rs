@@ -18,10 +18,12 @@ fn main() {
         "mukua_konae",
         "rarangi_konae",
     ];
+}
 
     for command in commands {
         let script = reo::ReoScript::new(command);
         script.execute();
+    };
         
     let code = "whakamuna_raraunga";
     let script =
