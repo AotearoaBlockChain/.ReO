@@ -1,3 +1,5 @@
+mod crypto;
+
 pub struct ReoScript {
     pub code: String,
 }
@@ -29,4 +31,17 @@ fn analyze_data() {
 
     let max = data.iter().max().unwrap();
     println!("Ko te tino teitei: {}", max);
+}
+
+fn tatari_raraunga() {
+    // Tauira mahi tātari raraunga
+    let raraunga = vec![1, 2, 3, 4, 5];
+    let tapeke: i32 = raraunga.iter().sum();
+    println!("Kua tatauria ngā raraunga: {}", tapeke);
+
+    let toharite = tapeke as f32 / raraunga.len() as f32;
+    println!("Ko te toharite: {}", toharite);
+
+    let tino_teitei = raraunga.iter().max().unwrap();
+    println!("Ko te tino teitei: {}", tino_teitei);
 }

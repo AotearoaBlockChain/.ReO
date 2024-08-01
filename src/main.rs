@@ -5,12 +5,23 @@ mod consensus;
 mod interpretation;
 mod manage;
 mod reo;
+mod crypto;
 
 use crate::consensus::{Purotu, RopuRaraunga, whakamana, tumomo_hoko};
 use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
 use crate::manage::HangangaKonae;
 
 fn main() {
+    let code = "whakamuna_raraunga"
+    let script =
+reo::ReoScript::new(code);
+    script.execute();
+
+    let code = "hangaia_hmac"
+    let script =
+reo::ReoScript::new(code);
+    script.execute();
+
     let code = "analyze_data";
     let script = 
 reo::ReoScript::new(code);
