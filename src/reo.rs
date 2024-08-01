@@ -1,5 +1,8 @@
 use ring::digest::{Context, Digest, SHA256};
 use ring::hmac;
+use std::fs::{self, File};
+use std::io::Write;
+use std::path::Path;
 
 // Whakamunatia ngā raraunga
 pub fn whakamuna_raraunga(raraunga: &str) -> String {
@@ -14,6 +17,39 @@ pub fn hangaia_hmac(ki: &str, raraunga: &str) -> String {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
     let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     hex::encode(waitohu.as_ref())
+}
+
+// Tapirihia he konae
+pub fn tapirihia_konae(ingoa: &str) {
+    let path = Path::new(ingoa);
+    match File::create(&path) {
+        Ok(_) => println!("Konae '{}' kua tapirihia ki 'Tauira Konae'", ingoa),
+        Err(e) => println!("Kāore e taea te hanga i te konae '{}': {}", ingoa, e),
+    }
+}
+
+// Mukua he konae
+pub fn mukua_konae(ingoa: &str) {
+    let path = Path::new(ingoa);
+    match fs::remove_file(&path) {
+        Ok(_) => println!("Konae '{}' kua mukua i 'Tauira Konae'", ingoa),
+        Err(e) => println!("Kāore e taea te muku i te konae '{}': {}", ingoa, e),
+    }
+}
+
+// Rārangi ngā konae
+pub fn rarangi_konae() {
+    match fs::read_dir(".") {
+        Ok(entries) => {
+            println!("Rarangi konae kei roto i 'Tauira Konae':");
+            for entry in entries {
+                if let Ok(entry) = entry {
+                    println!("{}", entry.file_name().into_string().unwrap());
+                }
+            }
+        }
+        Err(e) => println!("Kāore e taea te pānui i te rārangi konae: {}", e),
+    }
 }
 
 pub struct ReoScript {
@@ -39,6 +75,14 @@ impl ReoScript {
             let raraunga = "ētahi raraunga hei waitohu";
             let hmac = hangaia_hmac(ki, raraunga);
             println!("Kua hangaia te HMAC: {}", hmac);
+        } else if self.code.contains("tapirihia_konae") {
+            let ingoa = "tauira.txt";
+            tapirihia_konae(ingoa);
+        } else if self.code.contains("mukua_konae") {
+            let ingoa = "tauira.txt";
+            mukua_konae(ingoa);
+        } else if self.code.contains("rarangi_konae") {
+            rarangi_konae();
         } else {
             println!("Kāore he mahi mō tēnei kōwae.");
         }
