@@ -1,7 +1,5 @@
 // src/consensus.rs
 
-use std::collections::HashSet;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct Purotu {
     // Whakatakotoria nga apure i konei

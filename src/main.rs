@@ -4,17 +4,23 @@ mod compile;
 mod consensus;
 mod interpretation;
 mod manage;
+mod reo;
 
 use crate::consensus::{Purotu, RopuRaraunga, whakamana, tumomo_hoko};
 use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
 use crate::manage::HangangaKonae;
 
 fn main() {
+    let code = "analyze_data";
+    let script = 
+reo::ReoScript::new(code);
+    script.execute();
+
     let mut ropu_raraunga = RopuRaraunga {
-        // Whakatakotoria nga apure i konei
+        // Initialize fields here if needed
     };
     let taura = Purotu {
-        // Whakatakotoria nga apure i konei
+        // Initialize fields here if needed
     };
 
     whakamana(&mut ropu_raraunga, taura);
