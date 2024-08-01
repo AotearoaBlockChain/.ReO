@@ -1,5 +1,3 @@
-// src/main.rs
-
 mod compile;
 mod consensus;
 mod interpretation;
@@ -14,30 +12,26 @@ fn main() {
     let commands = vec![
         "whakamuna_raraunga",
         "hangaia_hmac",
-        "tapirihia_konae",
-        "mukua_konae",
+        "tapirihia_konae tauira.txt",
+        "mukua_konae tauira.txt",
         "rarangi_konae",
     ];
-}
 
     for command in commands {
         let script = reo::ReoScript::new(command);
         script.execute();
-    };
-        
+    }
+
     let code = "whakamuna_raraunga";
-    let script =
-reo::ReoScript::new(code);
+    let script = reo::ReoScript::new(code);
     script.execute();
 
     let code = "hangaia_hmac";
-    let script =
-reo::ReoScript::new(code);
+    let script = reo::ReoScript::new(code);
     script.execute();
 
     let code = "analyze_data";
-    let script = 
-reo::ReoScript::new(code);
+    let script = reo::ReoScript::new(code);
     script.execute();
 
     let mut ropu_raraunga = RopuRaraunga {
