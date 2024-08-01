@@ -11,6 +11,18 @@ use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_kore
 use crate::manage::HangangaKonae;
 
 fn main() {
+    let commands = vec![
+        "whakamuna_raraunga",
+        "hangaia_hmac",
+        "tapirihia_konae",
+        "mukua_konae",
+        "rarangi_konae",
+    ];
+
+    for command in commands {
+        let script = reo::ReoScript::new(command);
+        script.execute();
+        
     let code = "whakamuna_raraunga";
     let script =
 reo::ReoScript::new(code);
