@@ -6,7 +6,7 @@ use std::path::Path;
 use std::collections::HashMap;
 use std::error::Error;
 
-// Whakamunatia ngā raraunga (Hash data)
+// Hash data
 pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
     let mut horopaki = Context::new(&SHA256);
     horopaki.update(raraunga.as_bytes());
@@ -14,14 +14,14 @@ pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
     Ok(hex::encode(whakamuna.as_ref()))
 }
 
-// Waihangahia te HMAC (Create HMAC)
+// Create HMAC
 pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
     let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     Ok(hex::encode(waitohu.as_ref()))
 }
 
-// Tapirihia he konae (Add a file)
+// Add a file
 pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     let ara = Path::new(ingoa);
     File::create(&ara)?;
@@ -29,7 +29,7 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// Mukua he konae (Delete a file)
+// Delete a file
 pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     let ara = Path::new(ingoa);
     fs::remove_file(&ara)?;
@@ -37,7 +37,7 @@ pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// Rārangi ngā konae (List files)
+// List files
 pub fn rarangi_konae() -> Result<(), Box<dyn Error>> {
     for entry in fs::read_dir(".")? {
         let entry = entry?;
@@ -53,13 +53,15 @@ pub struct ReoScript {
 
 impl ReoScript {
     pub fn hou(waehere: &str) -> Self {
-        let mut commands = HashMap::new();
+        let mut commands: HashMap<String, Box<dyn Fn() -> Result<(), Box<dyn Error>>>> = HashMap::new();
+
         commands.insert("whakamuna_raraunga".to_string(), Box::new(|| {
-            let raraunga = "ētahi raraunga hei whakamuna";
+            let raraunga = "etahi raraunga hei whakamuna";
             let hash = whakamuna_raraunga(raraunga)?;
-            println!("Kua whakamunatia ngā raraunga: {}", hash);
+            println!("Kua whakamunatia nga raraunga: {}", hash);
             Ok(())
         }));
+
         commands.insert("hangaia_hmac".to_string(), Box::new(|| {
             let ki = "ki_muna";
             let raraunga = "etahi raraunga hei waitohu";
@@ -67,16 +69,19 @@ impl ReoScript {
             println!("Kua hangaia te HMAC: {}", hmac);
             Ok(())
         }));
+
         commands.insert("tapirihia_konae".to_string(), Box::new(|| {
             let ingoa = "tauira.txt";
             tapirihia_konae(ingoa)?;
             Ok(())
         }));
+
         commands.insert("mukua_konae".to_string(), Box::new(|| {
             let ingoa = "tauira.txt";
             mukua_konae(ingoa)?;
             Ok(())
         }));
+
         commands.insert("rarangi_konae".to_string(), Box::new(|| {
             rarangi_konae()?;
             Ok(())
@@ -97,4 +102,4 @@ impl ReoScript {
             println!("Kaore he mahi mo tenei waehere.");
         }
     }
-    }
+        }
