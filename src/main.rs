@@ -8,40 +8,45 @@ mod crypto;
 use crate::consensus::{Purotu, RopuRaraunga, whakamana};
 use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
 use crate::manage::HangangaKonae;
+<<<<<<< HEAD
 use crate::crypto::{hangaia_kiwaha_matua, waitohua_raraunga, whakau_waitohu};
 use crate::reo::{ReoScript};
+=======
+use crate::crypto::{hangaia_kīwaha_matua, waitohua_raraunga, whakaū_waitohu};
+use crate::reo::{ReoScript, whakamuna_raraunga, hangaia_hmac, tapirihia_konae, mukua_konae, rarangi_konae};
+>>>>>>> 157538deaa0bbd0ed1f37572da935ed9877178cf
 
 fn main() {
     let whakahau = vec![
         "whakamuna_raraunga",
         "hangaia_hmac",
-        "tapirihia_konae tauira.txt",
-        "mukua_konae tauira.txt",
+        "tapirihia_konae",
+        "mukua_konae",
         "rarangi_konae",
     ];
 
-    for whakahau in whakahau {
-        let hotaka = ReoScript::new(whakahau);
-        hotaka.execute();
+    for waehere in whakahau {
+        let hōtaka = ReoScript::hou(waehere);
+        hōtaka.whakahaere();
     }
 
     let waehere = "whakamuna_raraunga";
-    let hotaka = ReoScript::new(waehere);
-    hotaka.execute();
+    let hōtaka = ReoScript::hou(waehere);
+    hōtaka.whakahaere();
 
     let waehere = "hangaia_hmac";
-    let hotaka = ReoScript::new(waehere);
-    hotaka.execute();
+    let hōtaka = ReoScript::hou(waehere);
+    hōtaka.whakahaere();
 
-    let waehere = "tatari_raraunga";
-    let hotaka = ReoScript::new(waehere);
-    hotaka.execute();
+    let waehere = "tātari_raraunga";
+    let hōtaka = ReoScript::hou(waehere);
+    hōtaka.whakahaere();
 
     let mut ropu_raraunga = RopuRaraunga {
-        // Whakatungia nga apure i konei mena e tika ana
+        // Whakatūngia ngā āpure i konei mēnā e tika ana
     };
     let taura = Purotu {
-        // Whakatungia nga apure i konei mena e tika ana
+        // Whakatūngia ngā āpure i konei mēnā e tika ana
     };
 
     whakamana(&mut ropu_raraunga, taura);
@@ -56,29 +61,29 @@ fn main() {
         apure2: 24,
     };
 
-    // Whakamatautau i te whakamaramatia
+    // Whakamātautau i te whakamārama
     whakamaramatia_korero("rerehangu");
 
-    // Tauira whakahaere konae
+    // Tauira whakahaere kōnae
     let konae = HangangaKonae::hou("Tauira Konae".to_string(), 1024);
     konae.tapirihia_konae("tauira.txt");
     konae.muku_konae("tauira.txt");
     konae.rarangi_konae();
 
     // Tauira ECDSA
-    match hangaia_kiwaha_matua() {
-        Ok((ki_muna, ki_tumatanui)) => {
+    match hangaia_kīwaha_matua() {
+        Ok((kī_muna, kī_tūmatanui)) => {
             let raraunga = b"tauira raraunga";
-            match waitohua_raraunga(&ki_muna, raraunga) {
+            match waitohua_raraunga(&kī_muna, raraunga) {
                 Ok(waitohu) => {
-                    match whakau_waitohu(&ki_tumatanui, raraunga, &waitohu) {
+                    match whakaū_waitohu(&kī_tūmatanui, raraunga, &waitohu) {
                         Ok(he_tika) => println!("He tika te waitohu: {}", he_tika),
-                        Err(e) => println!("Hapa i te whakau waitohu: {}", e),
+                        Err(e) => println!("Hapa i te whakaū waitohu: {}", e),
                     }
                 },
                 Err(e) => println!("Hapa i te waitohua raraunga: {}", e),
             }
         },
-        Err(e) => println!("Hapa i te waihanga kiwaha matua: {}", e),
+        Err(e) => println!("Hapa i te waihanga kīwaha matua: {}", e),
     }
 }
