@@ -1,5 +1,39 @@
-pub fn interpret(command: &str) {
-    match command {
+pub struct TauiraHanganga {
+    // Whakatakotoria nga apure i konei
+    pub apure1: String,
+    pub apure2: i32,
+}
+
+pub fn tauira_mahi() {
+    // Tinana o te mahi i konei
+}
+
+pub struct Whakamaamatanga {
+    // Whakatakotoria nga apure i konei
+    pub apure1: String,
+    pub apure2: i32,
+}
+
+impl Whakamaamatanga {
+    pub fn hou(apure1: String, apure2: i32) -> Self {
+        Whakamaamatanga { apure1, apure2 }
+    }
+
+    pub fn whakamamatia(&self) {
+        // Rautaki whakamamatanga i konei
+    }
+}
+
+pub fn whakamaramatia_nga_raraunga(raraunga: &str) -> Whakamaamatanga {
+    // Tinana o te mahi i konei
+    Whakamaamatanga {
+        apure1: raraunga.to_string(),
+        apure2: raraunga.len() as i32,
+    }
+}
+
+pub fn whakamaramatia_korero(kowae: &str) {
+    match kowae {
         "rerehangu" => println!("Variable declaration"),
         "tau" => println!("Number type"),
         "rarangi" => println!("String type"),
@@ -47,6 +81,6 @@ pub fn interpret(command: &str) {
         "Whakatairanga_API-Python" => println!("Interoperate with Python"),
         "Whakatairanga_API-Java" => println!("Interoperate with Java"),
         "Whakatairanga_API-C++" => println!("Interoperate with C++"),
-        _ => println!("Unknown command"),
+        _ => println!("Kowae kaore i te mohiotia"),
     }
-}
+        }

@@ -1,4 +1,9 @@
-pub fn compile(script: &str) {
-    println!("Compiling script: {}", script);
-    // Add your compilation logic here
+// src/compile.rs
+
+pub struct HangangaWhakahiato {
+    // Whakatakotoria nga apure i konei
+}
+
+pub fn mahi_whakahiato() {
+    // Tinana o te mahi i konei
 }
