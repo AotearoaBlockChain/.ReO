@@ -21,20 +21,20 @@ fn main() {
     ];
 
     for whakahau in whakahau {
-        let hotaka = ReoScript::hou(whakahau);
+        let hotaka = ReoScript::new(whakahau);
         hotaka.whakahaere();
     }
 
     let waehere = "whakamuna_raraunga";
-    let hotaka = ReoScript::hou(waehere);
+    let hotaka = ReoScript::new(waehere);
     hotaka.whakahaere();
 
     let waehere = "hangaia_hmac";
-    let hotaka = ReoScript::hou(waehere);
+    let hotaka = ReoScript::new(waehere);
     hotaka.whakahaere();
 
     let waehere = "tatari_raraunga";
-    let hotaka = ReoScript::hou(waehere);
+    let hotaka = ReoScript::new(waehere);
     hotaka.whakahaere();
 
     let mut ropu_raraunga = RopuRaraunga {
@@ -81,4 +81,4 @@ fn main() {
         },
         Err(e) => println!("Hapa i te waihanga kiwaha matua: {}", e),
     }
-    }
+}
