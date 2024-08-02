@@ -12,29 +12,31 @@ use crate::crypto::{hangaia_kiwaha_matua, waitohua_raraunga, whakau_waitohu};
 use crate::reo::{ReoScript, whakamuna_raraunga, hangaia_hmac, tapirihia_konae, mukua_konae, rarangi_konae};
 
 fn main() {
-    let whakahau = vec![
-        "whakamuna_raraunga",
-        "hangaia_hmac",
-        "tapirihia_konae",
-        "mukua_konae",
-        "rarangi_konae",
+    let commands = vec![
+        ("whakamuna_raraunga", vec!["etahi raraunga hei whakamuna".to_string()]),
+        ("hangaia_hmac", vec!["ki_muna".to_string(), "etahi raraunga hei waitohu".to_string()]),
+        ("tapirihia_konae", vec!["tauira.txt".to_string()]),
+        ("mukua_konae", vec!["tauira.txt".to_string()]),
+        ("rarangi_konae", vec![]),
     ];
 
-    for waehere in whakahau {
-        let hotaka = ReoScript::hou(waehere);
+    for (waehere, params) in commands {
+        let hotaka = ReoScript::hou(waehere, params);
         hotaka.whakahaere();
     }
 
     let waehere = "whakamuna_raraunga";
-    let hotaka = ReoScript::hou(waehere);
+    let params = vec!["etahi raraunga hei whakamuna".to_string()];
+    let hotaka = ReoScript::hou(waehere, params);
     hotaka.whakahaere();
 
     let waehere = "hangaia_hmac";
-    let hotaka = ReoScript::hou(waehere);
+    let params = vec!["ki_muna".to_string(), "etahi raraunga hei waitohu".to_string()];
+    let hotaka = ReoScript::hou(waehere, params);
     hotaka.whakahaere();
 
     let waehere = "tatari_raraunga";
-    let hotaka = ReoScript::hou(waehere);
+    let hotaka = ReoScript::hou(waehere, vec![]);
     hotaka.whakahaere();
 
     let mut ropu_raraunga = RopuRaraunga {
@@ -81,4 +83,4 @@ fn main() {
         },
         Err(e) => println!("Hapa i te waihanga kiwaha matua: {}", e),
     }
-}
+        }
