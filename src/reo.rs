@@ -1,102 +1,100 @@
-use ring::digest::{Context, SHA256};
+use ring::digest::{Context, Digest, SHA256};
 use ring::hmac;
 use std::fs::{self, File};
+use std::io::Write;
 use std::path::Path;
+use std::collections::HashMap;
+use std::error::Error;
 
-// Whakamunatia nga raraunga
-pub fn whakamuna_raraunga(raraunga: &str) -> String {
-    let mut context = Context::new(&SHA256);
-    context.update(raraunga.as_bytes());
-    let digest = context.finish();
-    hex::encode(digest.as_ref())
+// Whakamunatia ngā raraunga (Hash data)
+pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
+    let mut horopaki = Context::new(&SHA256);
+    horopaki.update(raraunga.as_bytes());
+    let whakamuna = horopaki.finish();
+    Ok(hex::encode(whakamuna.as_ref()))
 }
 
-// Waihangahia te HMAC
-pub fn hangaia_hmac(ki: &str, raraunga: &str) -> String {
-    let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
-    let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
-    hex::encode(waitohu.as_ref())
+// Waihangahia te HMAC (Create HMAC)
+pub fn hangaia_hmac(kī: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
+    let hmac_kī = hmac::Key::new(hmac::HMAC_SHA256, kī.as_bytes());
+    let waitohu = hmac::sign(&hmac_kī, raraunga.as_bytes());
+    Ok(hex::encode(waitohu.as_ref()))
 }
 
-// Tapirihia he konae
-pub fn tapirihia_konae(ingoa: &str) {
-    let path = Path::new(ingoa);
-    match File::create(&path) {
-        Ok(_) => println!("Konae '{}' kua tapirihia ki 'Tauira Konae'", ingoa),
-        Err(e) => println!("Kaore e taea te hanga i te konae '{}': {}", ingoa, e),
+// Tapirihia he konae (Add a file)
+pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
+    let ara = Path::new(ingoa);
+    File::create(&ara)?;
+    println!("Konae '{}' kua tapirihia", ingoa);
+    Ok(())
+}
+
+// Mukua he konae (Delete a file)
+pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
+    let ara = Path::new(ingoa);
+    fs::remove_file(&ara)?;
+    println!("Konae '{}' kua mukua", ingoa);
+    Ok(())
+}
+
+// Rārangi ngā konae (List files)
+pub fn rarangi_konae() -> Result<(), Box<dyn Error>> {
+    for entry in fs::read_dir(".")? {
+        let entry = entry?;
+        println!("{}", entry.file_name().into_string().unwrap());
     }
-}
-
-// Mukua he konae
-pub fn mukua_konae(ingoa: &str) {
-    let path = Path::new(ingoa);
-    match fs::remove_file(&path) {
-        Ok(_) => println!("Konae '{}' kua mukua i 'Tauira Konae'", ingoa),
-        Err(e) => println!("Kaore e taea te muku i te konae '{}': {}", ingoa, e),
-    }
-}
-
-// Rarangi nga konae
-pub fn rarangi_konae() {
-    match fs::read_dir(".") {
-        Ok(entries) => {
-            println!("Rarangi konae kei roto i 'Tauira Konae':");
-            for entry in entries {
-                if let Ok(entry) = entry {
-                    println!("{}", entry.file_name().into_string().unwrap());
-                }
-            }
-        }
-        Err(e) => println!("Kaore e taea te panui i te rarangi konae: {}", e),
-    }
+    Ok(())
 }
 
 pub struct ReoScript {
-    pub code: String,
+    pub waehere: String,
+    pub commands: HashMap<String, Box<dyn Fn() -> Result<(), Box<dyn Error>>>>,
 }
 
 impl ReoScript {
-    pub fn new(code: &str) -> Self {
-        ReoScript {
-            code: code.to_string(),
-        }
-    }
-
-    pub fn execute(&self) {
-        if self.code.contains("tatari_raraunga") {
-            tatari_raraunga();
-        } else if self.code.contains("whakamuna_raraunga") {
-            let raraunga = "etahi raraunga hei whakamuna";
-            let hash = whakamuna_raraunga(raraunga);
-            println!("Kua whakamunatia nga raraunga: {}", hash);
-        } else if self.code.contains("hangaia_hmac") {
-            let ki = "ki_muna";
-            let raraunga = "etahi raraunga hei waitohu";
-            let hmac = hangaia_hmac(ki, raraunga);
+    pub fn hou(waehere: &str) -> Self {
+        let mut commands = HashMap::new();
+        commands.insert("whakamuna_raraunga".to_string(), Box::new(|| {
+            let raraunga = "ētahi raraunga hei whakamuna";
+            let hash = whakamuna_raraunga(raraunga)?;
+            println!("Kua whakamunatia ngā raraunga: {}", hash);
+            Ok(())
+        }));
+        commands.insert("hangaia_hmac".to_string(), Box::new(|| {
+            let kī = "ki_muna";
+            let raraunga = "ētahi raraunga hei waitohu";
+            let hmac = hangaia_hmac(kī, raraunga)?;
             println!("Kua hangaia te HMAC: {}", hmac);
-        } else if self.code.contains("tapirihia_konae") {
+            Ok(())
+        }));
+        commands.insert("tapirihia_konae".to_string(), Box::new(|| {
             let ingoa = "tauira.txt";
-            tapirihia_konae(ingoa);
-        } else if self.code.contains("mukua_konae") {
+            tapirihia_konae(ingoa)?;
+            Ok(())
+        }));
+        commands.insert("mukua_konae".to_string(), Box::new(|| {
             let ingoa = "tauira.txt";
-            mukua_konae(ingoa);
-        } else if self.code.contains("rarangi_konae") {
-            rarangi_konae();
-        } else {
-            println!("Kaore he mahi mo tenei kowae.");
+            mukua_konae(ingoa)?;
+            Ok(())
+        }));
+        commands.insert("rarangi_konae".to_string(), Box::new(|| {
+            rarangi_konae()?;
+            Ok(())
+        }));
+
+        ReoScript {
+            waehere: waehere.to_string(),
+            commands,
         }
     }
-}
 
-fn tatari_raraunga() {
-    // Tauira mahi tatari raraunga
-    let raraunga = vec![1, 2, 3, 4, 5];
-    let tapeke: i32 = raraunga.iter().sum();
-    println!("Kua tatauria nga raraunga: {}", tapeke);
-
-    let toharite = tapeke as f32 / raraunga.len() as f32;
-    println!("Ko te toharite: {}", toharite);
-
-    let tino_teitei = raraunga.iter().max().unwrap();
-    println!("Ko te tino teitei: {}", tino_teitei);
+    pub fn whakahaere(&self) {
+        if let Some(command) = self.commands.get(&self.waehere) {
+            if let Err(e) = command() {
+                println!("Hapa i te whakahaere whakahau: {}", e);
+            }
+        } else {
+            println!("Kāore he mahi mō tēnei waehere.");
         }
+    }
+    }
