@@ -68,10 +68,10 @@ fn main() {
     // Tauira ECDSA
     match hangaia_kīwaha_matua() {
         Ok((kī_muna, kī_tūmatanui)) => {
-            let raraunga = b"tauira raraunga";
-            match waitohua_raraunga(&kī_muna, raraunga) {
+            let raraunga = b"tauira raraunga".to_vec();
+            match waitohua_raraunga(&kī_muna, &raraunga) {
                 Ok(waitohu) => {
-                    match whakaū_waitohu(&kī_tūmatanui, raraunga, &waitohu) {
+                    match whakaū_waitohu(&kī_tūmatanui, &raraunga, &waitohu) {
                         Ok(he_tika) => println!("He tika te waitohu: {}", he_tika),
                         Err(e) => println!("Hapa i te whakaū waitohu: {}", e),
                     }
@@ -81,4 +81,4 @@ fn main() {
         },
         Err(e) => println!("Hapa i te waihanga kīwaha matua: {}", e),
     }
-}
+        }
