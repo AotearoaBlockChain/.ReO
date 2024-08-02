@@ -1,9 +1,8 @@
 use ring::digest::{Context, Digest, SHA256};
 use ring::hmac;
-use std::fs::{self, File};
-use std::io::Write;
-use std::path::Path;
-use std::collections::HashMap;
+use ring::signature::{EcdsaKeyPair, KeyPair, ECDSA_P256_SHA256_FIXED_SIGNING, ECDSA_P256_SHA256_FIXED};
+use ring::rand::SystemRandom;
+use ring::signature::{self, UnparsedPublicKey};
 use std::error::Error;
 
 // Whakamunatia ngā raraunga (Hash data)
@@ -21,85 +20,28 @@ pub fn hangaia_hmac(kī: &str, raraunga: &str) -> Result<String, Box<dyn Error>>
     Ok(hex::encode(waitohu.as_ref()))
 }
 
-// Tapirihia he konae (Add a file)
-pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
-    let ara = Path::new(ingoa);
-    File::create(&ara)?;
-    println!("Konae '{}' kua tapirihia", ingoa);
-    Ok(())
+// Waihangahia te kīwaha matua (Create keypair)
+pub fn hangaia_kīwaha_matua() -> Result<(Vec<u8>, Vec<u8>), Box<dyn Error>> {
+    let rng = SystemRandom::new();
+    let pkcs8_bytes = EcdsaKeyPair::generate_pkcs8(&ECDSA_P256_SHA256_FIXED_SIGNING, &rng)?;
+    let kīwaha_matua = EcdsaKeyPair::from_pkcs8(&pkcs8_bytes)?;
+
+    let kī_muna = pkcs8_bytes.as_ref().to_vec();
+    let kī_tūmatanui = kīwaha_matua.public_key().as_ref().to_vec();
+
+    Ok((kī_muna, kī_tūmatanui))
 }
 
-// Mukua he konae (Delete a file)
-pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
-    let ara = Path::new(ingoa);
-    fs::remove_file(&ara)?;
-    println!("Konae '{}' kua mukua", ingoa);
-    Ok(())
+// Waitohua ngā raraunga (Sign data)
+pub fn waitohua_raraunga(kī_muna: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+    let kīwaha_matua = EcdsaKeyPair::from_pkcs8(kī_muna)?;
+    let rng = SystemRandom::new();
+    let waitohu = kīwaha_matua.sign(&rng, raraunga)?;
+    Ok(waitohu.as_ref().to_vec())
 }
 
-// Rārangi ngā konae (List files)
-pub fn rarangi_konae() -> Result<(), Box<dyn Error>> {
-    for entry in fs::read_dir(".")? {
-        let entry = entry?;
-        println!("{}", entry.file_name().into_string().unwrap());
-    }
-    Ok(())
+// Whakaūngia te waitohu (Verify signature)
+pub fn whakaū_waitohu(kī_tūmatanui: &[u8], raraunga: &[u8], waitohu: &[u8]) -> Result<bool, Box<dyn Error>> {
+    let kī_tūmatanui = UnparsedPublicKey::new(&ECDSA_P256_SHA256_FIXED, kī_tūmatanui);
+    kī_tūmatanui.verify(raraunga, waitohu).map_err(|_| "Waitohu kāore i te tika".into())
 }
-
-pub struct ReoScript {
-    pub waehere: String,
-    pub commands: HashMap<String, Box<dyn Fn() -> Result<(), Box<dyn Error>>>>,
-}
-
-impl ReoScript {
-    pub fn hou(waehere: &str) -> Self {
-        let mut commands: HashMap<String, Box<dyn Fn() -> Result<(), Box<dyn Error>>>> = HashMap::new();
-
-        commands.insert("whakamuna_raraunga".to_string(), Box::new(|| {
-            let raraunga = "ētahi raraunga hei whakamuna";
-            let hash = whakamuna_raraunga(raraunga)?;
-            println!("Kua whakamunatia ngā raraunga: {}", hash);
-            Ok(())
-        }));
-
-        commands.insert("hangaia_hmac".to_string(), Box::new(|| {
-            let kī = "ki_muna";
-            let raraunga = "ētahi raraunga hei waitohu";
-            let hmac = hangaia_hmac(kī, raraunga)?;
-            println!("Kua hangaia te HMAC: {}", hmac);
-            Ok(())
-        }));
-
-        commands.insert("tapirihia_konae".to_string(), Box::new(|| {
-            let ingoa = "tauira.txt";
-            tapirihia_konae(ingoa)?;
-            Ok(())
-        }));
-
-        commands.insert("mukua_konae".to_string(), Box::new(|| {
-            let ingoa = "tauira.txt";
-            mukua_konae(ingoa)?;
-            Ok(())
-        }));
-
-        commands.insert("rarangi_konae".to_string(), Box::new(|| {
-            rarangi_konae()?;
-            Ok(())
-        }));
-
-        ReoScript {
-            waehere: waehere.to_string(),
-            commands,
-        }
-    }
-
-    pub fn whakahaere(&self) {
-        if let Some(command) = self.commands.get(&self.waehere) {
-            if let Err(e) = command() {
-                println!("Hapa i te whakahaere whakahau: {}", e);
-            }
-        } else {
-            println!("Kāore he mahi mō tēnei waehere.");
-        }
-    }
-        }
