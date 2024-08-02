@@ -15,9 +15,9 @@ pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
 }
 
 // Waihangahia te HMAC (Create HMAC)
-pub fn hangaia_hmac(kī: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
-    let hmac_kī = hmac::Key::new(hmac::HMAC_SHA256, kī.as_bytes());
-    let waitohu = hmac::sign(&hmac_kī, raraunga.as_bytes());
+pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
+    let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
+    let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     Ok(hex::encode(waitohu.as_ref()))
 }
 
@@ -61,9 +61,9 @@ impl ReoScript {
             Ok(())
         }));
         commands.insert("hangaia_hmac".to_string(), Box::new(|| {
-            let kī = "ki_muna";
-            let raraunga = "ētahi raraunga hei waitohu";
-            let hmac = hangaia_hmac(kī, raraunga)?;
+            let ki = "ki_muna";
+            let raraunga = "etahi raraunga hei waitohu";
+            let hmac = hangaia_hmac(ki, raraunga)?;
             println!("Kua hangaia te HMAC: {}", hmac);
             Ok(())
         }));
@@ -94,7 +94,7 @@ impl ReoScript {
                 println!("Hapa i te whakahaere whakahau: {}", e);
             }
         } else {
-            println!("Kāore he mahi mō tēnei waehere.");
+            println!("Kaore he mahi mo tenei waehere.");
         }
     }
     }
