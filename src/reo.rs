@@ -47,58 +47,67 @@ pub fn rarangi_konae() -> Result<(), Box<dyn Error>> {
 
 pub struct ReoScript {
     pub waehere: String,
-    pub commands: HashMap<String, Box<dyn Fn() -> Result<(), Box<dyn Error>>>>,
+    pub params: Vec<String>,
+    pub commands: HashMap<String, Box<dyn Fn(&[String]) -> Result<(), Box<dyn Error>>>>,
 }
 
 impl ReoScript {
-    pub fn hou(waehere: &str) -> Self {
-        let mut commands: HashMap<String, Box<dyn Fn() -> Result<(), Box<dyn Error>>>> = HashMap::new();
+    pub fn hou(waehere: &str, params: Vec<String>) -> Self {
+        let mut commands: HashMap<String, Box<dyn Fn(&[String]) -> Result<(), Box<dyn Error>>>> = HashMap::new();
 
-        commands.insert("whakamuna_raraunga".to_string(), Box::new(|| {
-            let raraunga = "etahi raraunga hei whakamuna";
-            let hash = whakamuna_raraunga(raraunga)?;
+        commands.insert("whakamuna_raraunga".to_string(), Box::new(|params: &[String]| {
+            if params.len() != 1 {
+                return Err("Invalid number of parameters".into());
+            }
+            let hash = whakamuna_raraunga(&params[0])?;
             println!("Kua whakamunatia nga raraunga: {}", hash);
             Ok(())
         }));
 
-        commands.insert("hangaia_hmac".to_string(), Box::new(|| {
-            let ki = "ki_muna";
-            let raraunga = "etahi raraunga hei waitohu";
-            let hmac = hangaia_hmac(ki, raraunga)?;
+        commands.insert("hangaia_hmac".to_string(), Box::new(|params: &[String]| {
+            if params.len() != 2 {
+                return Err("Invalid number of parameters".into());
+            }
+            let hmac = hangaia_hmac(&params[0], &params[1])?;
             println!("Kua hangaia te HMAC: {}", hmac);
             Ok(())
         }));
 
-        commands.insert("tapirihia_konae".to_string(), Box::new(|| {
-            let ingoa = "tauira.txt";
-            tapirihia_konae(ingoa)?;
+        commands.insert("tapirihia_konae".to_string(), Box::new(|params: &[String]| {
+            if params.len() != 1 {
+                return Err("Invalid number of parameters".into());
+            }
+            tapirihia_konae(&params[0])?;
             Ok(())
         }));
 
-        commands.insert("mukua_konae".to_string(), Box::new(|| {
-            let ingoa = "tauira.txt";
-            mukua_konae(ingoa)?;
+        commands.insert("mukua_konae".to_string(), Box::new(|params: &[String]| {
+            if params.len() != 1 {
+                return Err("Invalid number of parameters".into());
+            }
+            mukua_konae(&params[0])?;
             Ok(())
         }));
 
-        commands.insert("rarangi_konae".to_string(), Box::new(|| {
+        commands.insert("rarangi_konae".to_string(), Box::new(|_params: &[String]| {
             rarangi_konae()?;
             Ok(())
         }));
 
         ReoScript {
             waehere: waehere.to_string(),
+            params,
             commands,
         }
     }
 
     pub fn whakahaere(&self) {
         if let Some(command) = self.commands.get(&self.waehere) {
-            if let Err(e) = command() {
+            if let Err(e) = command(&self.params) {
                 println!("Hapa i te whakahaere whakahau: {}", e);
             }
         } else {
             println!("Kaore he mahi mo tenei waehere.");
         }
     }
-        }
+                           }
