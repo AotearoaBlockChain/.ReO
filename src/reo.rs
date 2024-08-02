@@ -1,7 +1,6 @@
-use ring::digest::{Context, Digest, SHA256};
+use ring::digest::{Context, SHA256};
 use ring::hmac;
 use std::fs::{self, File};
-use std::io::Write;
 use std::path::Path;
 use std::collections::HashMap;
 use std::error::Error;
