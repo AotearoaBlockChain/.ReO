@@ -53,13 +53,15 @@ pub struct ReoScript {
 
 impl ReoScript {
     pub fn hou(waehere: &str) -> Self {
-        let mut commands = HashMap::new();
+        let mut commands: HashMap<String, Box<dyn Fn() -> Result<(), Box<dyn Error>>>> = HashMap::new();
+
         commands.insert("whakamuna_raraunga".to_string(), Box::new(|| {
             let raraunga = "ētahi raraunga hei whakamuna";
             let hash = whakamuna_raraunga(raraunga)?;
             println!("Kua whakamunatia ngā raraunga: {}", hash);
             Ok(())
         }));
+
         commands.insert("hangaia_hmac".to_string(), Box::new(|| {
             let kī = "ki_muna";
             let raraunga = "ētahi raraunga hei waitohu";
@@ -67,16 +69,19 @@ impl ReoScript {
             println!("Kua hangaia te HMAC: {}", hmac);
             Ok(())
         }));
+
         commands.insert("tapirihia_konae".to_string(), Box::new(|| {
             let ingoa = "tauira.txt";
             tapirihia_konae(ingoa)?;
             Ok(())
         }));
+
         commands.insert("mukua_konae".to_string(), Box::new(|| {
             let ingoa = "tauira.txt";
             mukua_konae(ingoa)?;
             Ok(())
         }));
+
         commands.insert("rarangi_konae".to_string(), Box::new(|| {
             rarangi_konae()?;
             Ok(())
@@ -97,4 +102,4 @@ impl ReoScript {
             println!("Kāore he mahi mō tēnei waehere.");
         }
     }
-    }
+        }
