@@ -1,9 +1,8 @@
-use ring::digest::{Context, Digest, SHA256};
+use ring::digest::{Context, SHA256};
 use ring::hmac;
 use ring::signature::{EcdsaKeyPair, KeyPair, ECDSA_P256_SHA256_FIXED_SIGNING, ECDSA_P256_SHA256_FIXED};
 use ring::rand::SystemRandom;
 use ring::signature::{self, UnparsedPublicKey};
-use ring::error::KeyRejected;
 use std::error::Error;
 
 // Whakamunatia nga raraunga (Hash data)
@@ -26,10 +25,11 @@ pub fn hangaia_kiwaha_matua() -> Result<(Vec<u8>, Vec<u8>), Box<dyn Error>> {
     let rng = SystemRandom::new();
     let pkcs8_bytes = EcdsaKeyPair::generate_pkcs8(&ECDSA_P256_SHA256_FIXED_SIGNING, &rng)
         .map_err(|_| "Failed to generate key pair")?;
-    let kiwaha_matua = EcdsaKeyPair::from_pkcs8(&ECDSA_P256_SHA256_FIXED_SIGNING, &pkcs8_bytes)
+    let pkcs8_bytes_ref = pkcs8_bytes.as_ref();
+    let kiwaha_matua = EcdsaKeyPair::from_pkcs8(&ECDSA_P256_SHA256_FIXED_SIGNING, pkcs8_bytes_ref)
         .map_err(|_| "Failed to create key pair from pkcs8")?;
 
-    let ki_muna = pkcs8_bytes.as_ref().to_vec();
+    let ki_muna = pkcs8_bytes_ref.to_vec();
     let ki_tumatanui = kiwaha_matua.public_key().as_ref().to_vec();
 
     Ok((ki_muna, ki_tumatanui))
