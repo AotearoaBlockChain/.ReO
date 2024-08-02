@@ -1,9 +1,9 @@
 // src/interpretation.rs
 
 pub struct TauiraHanganga {
-    // Whakatakotoria nga apure i konei
-    pub apure1: String,
-    pub apure2: i32,
+    // Whakatakotoria ngā āpure i konei
+    pub āpure1: String,
+    pub āpure2: i32,
 }
 
 pub fn tauira_mahi() {
@@ -11,14 +11,14 @@ pub fn tauira_mahi() {
 }
 
 pub struct Whakamaamatanga {
-    // Whakatakotoria nga apure i konei
-    pub apure1: String,
-    pub apure2: i32,
+    // Whakatakotoria ngā āpure i konei
+    pub āpure1: String,
+    pub āpure2: i32,
 }
 
 impl Whakamaamatanga {
-    pub fn hou(apure1: String, apure2: i32) -> Self {
-        Whakamaamatanga { apure1, apure2 }
+    pub fn hou(āpure1: String, āpure2: i32) -> Self {
+        Whakamaamatanga { āpure1, āpure2 }
     }
 
     pub fn whakamamatia(&self) {
@@ -29,13 +29,13 @@ impl Whakamaamatanga {
 pub fn whakamaramatia_nga_raraunga(raraunga: &str) -> Whakamaamatanga {
     // Tinana o te mahi i konei
     Whakamaamatanga {
-        apure1: raraunga.to_string(),
-        apure2: raraunga.len() as i32,
+        āpure1: raraunga.to_string(),
+        āpure2: raraunga.len() as i32,
     }
 }
 
-pub fn whakamaramatia_korero(command: &str) {
-    match command {
+pub fn whakamaramatia_korero(kōwae: &str) {
+    match kōwae {
         "rerehangu" => println!("Variable declaration"),
         "tau" => println!("Number type"),
         "rarangi" => println!("String type"),
@@ -43,15 +43,15 @@ pub fn whakamaramatia_korero(command: &str) {
         "rarangihua" => println!("List/Array type"),
         "mena" => println!("If statement"),
         "ranei" => println!("Else statement"),
-        "i te wa" => println!("While loop"),
-        "mo" => println!("For loop"),
+        "i te wā" => println!("While loop"),
+        "mō" => println!("For loop"),
         "mahi" => println!("Function declaration"),
         "hoki" => println!("Return statement"),
         "karanga" => println!("Function call"),
         "me" => println!("Logical AND"),
-        "kaore" => println!("Logical NOT"),
+        "kāore" => println!("Logical NOT"),
         "rite" => println!("Equal to comparison"),
-        "kaore i rite" => println!("Not equal to comparison"),
+        "kāore i rite" => println!("Not equal to comparison"),
         "nui ake" => println!("Greater than comparison"),
         "iti iho" => println!("Less than comparison"),
         "waihanga_whitinga" => println!("Create Transaction"),
@@ -60,10 +60,10 @@ pub fn whakamaramatia_korero(command: &str) {
         "whakamana_poka" => println!("Validate Block"),
         "whakamahi_kirimana" => println!("Execute Contract"),
         "tiki_toenga" => println!("Get Balance"),
-        "tiki_wahitau" => println!("Get Address"),
+        "tiki_wāhitau" => println!("Get Address"),
         "kairuku_poka" => println!("Mine Block"),
-        "koko" => println!("Encryption"),
-        "rakei" => println!("Decryption"),
+        "kōkō" => println!("Encryption"),
+        "rakēi" => println!("Decryption"),
         "whakamuka" => println!("Hashing"),
         "hoa" => println!("Peer"),
         "hono" => println!("Connect"),
@@ -72,7 +72,7 @@ pub fn whakamaramatia_korero(command: &str) {
         "karanga_kirimana" => println!("Invoke Contract"),
         "hanga" => println!("Compile"),
         "oma" => println!("Run"),
-        "kihai" => println!("Debug"),
+        "kīhai" => println!("Debug"),
         "whakamatauria" => println!("Test"),
         "hono_API" => println!("API Integration"),
         "whakatakoto_JSON_XML" => println!("JSON/XML Parsing"),
@@ -83,6 +83,6 @@ pub fn whakamaramatia_korero(command: &str) {
         "Whakatairanga_API-Python" => println!("Interoperate with Python"),
         "Whakatairanga_API-Java" => println!("Interoperate with Java"),
         "Whakatairanga_API-C++" => println!("Interoperate with C++"),
-        _ => println!("Unknown command"),
+        _ => println!("Kōwae kāore i te mōhiotia"),
     }
 }
