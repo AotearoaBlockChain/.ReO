@@ -24,7 +24,7 @@ pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> 
 pub fn hangaia_kiwaha_matua() -> Result<(Vec<u8>, Vec<u8>), Box<dyn Error>> {
     let rng = SystemRandom::new();
     let pkcs8_bytes = EcdsaKeyPair::generate_pkcs8(&ECDSA_P256_SHA256_FIXED_SIGNING, &rng)?;
-    let kiwaha_matua = EcdsaKeyPair::from_pkcs8(&pkcs8_bytes)?;
+    let kiwaha_matua = EcdsaKeyPair::from_pkcs8(&ECDSA_P256_SHA256_FIXED_SIGNING, &pkcs8_bytes)?;
 
     let ki_muna = pkcs8_bytes.as_ref().to_vec();
     let ki_tumatanui = kiwaha_matua.public_key().as_ref().to_vec();
@@ -34,7 +34,7 @@ pub fn hangaia_kiwaha_matua() -> Result<(Vec<u8>, Vec<u8>), Box<dyn Error>> {
 
 // Waitohua nga raraunga (Sign data)
 pub fn waitohua_raraunga(ki_muna: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
-    let kiwaha_matua = EcdsaKeyPair::from_pkcs8(ki_muna)?;
+    let kiwaha_matua = EcdsaKeyPair::from_pkcs8(&ECDSA_P256_SHA256_FIXED_SIGNING, ki_muna)?;
     let rng = SystemRandom::new();
     let waitohu = kiwaha_matua.sign(&rng, raraunga)?;
     Ok(waitohu.as_ref().to_vec())
@@ -44,4 +44,4 @@ pub fn waitohua_raraunga(ki_muna: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, Box
 pub fn whakau_waitohu(ki_tumatanui: &[u8], raraunga: &[u8], waitohu: &[u8]) -> Result<bool, Box<dyn Error>> {
     let ki_tumatanui = UnparsedPublicKey::new(&ECDSA_P256_SHA256_FIXED, ki_tumatanui);
     ki_tumatanui.verify(raraunga, waitohu).map_err(|_| "Waitohu kaore i te tika".into())
-}
+    }
