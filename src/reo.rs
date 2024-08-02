@@ -3,7 +3,7 @@ use ring::hmac;
 use std::fs::{self, File};
 use std::path::Path;
 
-// Whakamunatia ngā raraunga
+// Whakamunatia nga raraunga
 pub fn whakamuna_raraunga(raraunga: &str) -> String {
     let mut context = Context::new(&SHA256);
     context.update(raraunga.as_bytes());
@@ -23,7 +23,7 @@ pub fn tapirihia_konae(ingoa: &str) {
     let path = Path::new(ingoa);
     match File::create(&path) {
         Ok(_) => println!("Konae '{}' kua tapirihia ki 'Tauira Konae'", ingoa),
-        Err(e) => println!("Kāore e taea te hanga i te konae '{}': {}", ingoa, e),
+        Err(e) => println!("Kaore e taea te hanga i te konae '{}': {}", ingoa, e),
     }
 }
 
@@ -32,11 +32,11 @@ pub fn mukua_konae(ingoa: &str) {
     let path = Path::new(ingoa);
     match fs::remove_file(&path) {
         Ok(_) => println!("Konae '{}' kua mukua i 'Tauira Konae'", ingoa),
-        Err(e) => println!("Kāore e taea te muku i te konae '{}': {}", ingoa, e),
+        Err(e) => println!("Kaore e taea te muku i te konae '{}': {}", ingoa, e),
     }
 }
 
-// Rārangi ngā konae
+// Rarangi nga konae
 pub fn rarangi_konae() {
     match fs::read_dir(".") {
         Ok(entries) => {
@@ -47,7 +47,7 @@ pub fn rarangi_konae() {
                 }
             }
         }
-        Err(e) => println!("Kāore e taea te pānui i te rārangi konae: {}", e),
+        Err(e) => println!("Kaore e taea te panui i te rarangi konae: {}", e),
     }
 }
 
@@ -63,15 +63,15 @@ impl ReoScript {
     }
 
     pub fn execute(&self) {
-        if self.code.contains("tātari_raraunga") {
-            tātari_raraunga();
+        if self.code.contains("tatari_raraunga") {
+            tatari_raraunga();
         } else if self.code.contains("whakamuna_raraunga") {
-            let raraunga = "ētahi raraunga hei whakamuna";
+            let raraunga = "etahi raraunga hei whakamuna";
             let hash = whakamuna_raraunga(raraunga);
-            println!("Kua whakamunatia ngā raraunga: {}", hash);
+            println!("Kua whakamunatia nga raraunga: {}", hash);
         } else if self.code.contains("hangaia_hmac") {
             let ki = "ki_muna";
-            let raraunga = "ētahi raraunga hei waitohu";
+            let raraunga = "etahi raraunga hei waitohu";
             let hmac = hangaia_hmac(ki, raraunga);
             println!("Kua hangaia te HMAC: {}", hmac);
         } else if self.code.contains("tapirihia_konae") {
@@ -83,20 +83,20 @@ impl ReoScript {
         } else if self.code.contains("rarangi_konae") {
             rarangi_konae();
         } else {
-            println!("Kāore he mahi mō tēnei kōwae.");
+            println!("Kaore he mahi mo tenei kowae.");
         }
     }
 }
 
-fn tātari_raraunga() {
-    // Tauira mahi tātari raraunga
+fn tatari_raraunga() {
+    // Tauira mahi tatari raraunga
     let raraunga = vec![1, 2, 3, 4, 5];
     let tapeke: i32 = raraunga.iter().sum();
-    println!("Kua tatauria ngā raraunga: {}", tapeke);
+    println!("Kua tatauria nga raraunga: {}", tapeke);
 
     let toharite = tapeke as f32 / raraunga.len() as f32;
     println!("Ko te toharite: {}", toharite);
 
     let tino_teitei = raraunga.iter().max().unwrap();
     println!("Ko te tino teitei: {}", tino_teitei);
-}
+        }
