@@ -1,7 +1,7 @@
 // src/compile.rs
 
 pub struct HangangaWhakahiato {
-    // Whakatakotoria ngā āpure i konei
+    // Whakatakotoria nga apure i konei
 }
 
 pub fn mahi_whakahiato() {
