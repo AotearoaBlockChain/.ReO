@@ -4,7 +4,7 @@ mod interpretation;
 mod manage;
 mod reo;
 
-use crate::consensus::{Purotu, RopuRaraunga, whakamana, tumomo_hoko};
+use crate::consensus::{Purotu, RopuRaraunga, whakamana};
 use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
 use crate::manage::HangangaKonae;
 
