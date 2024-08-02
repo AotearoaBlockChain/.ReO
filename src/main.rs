@@ -5,7 +5,7 @@ mod manage;
 mod reo;
 mod crypto;
 
-use crate::consensus::{Purotu, RopuRaraunga, whakamana};
+use crate::consensus::{Purotu, RopuRaraunga, whakamana, tumomo_hoko};
 use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
 use crate::manage::HangangaKonae;
 use crate::crypto::{hangaia_kiwaha_matua, waitohua_raraunga, whakau_waitohu};
@@ -22,20 +22,20 @@ fn main() {
 
     for whakahau in whakahau {
         let hotaka = ReoScript::new(whakahau);
-        hotaka.whakahaere();
+        hotaka.execute();
     }
 
     let waehere = "whakamuna_raraunga";
     let hotaka = ReoScript::new(waehere);
-    hotaka.whakahaere();
+    hotaka.execute();
 
     let waehere = "hangaia_hmac";
     let hotaka = ReoScript::new(waehere);
-    hotaka.whakahaere();
+    hotaka.execute();
 
     let waehere = "tatari_raraunga";
     let hotaka = ReoScript::new(waehere);
-    hotaka.whakahaere();
+    hotaka.execute();
 
     let mut ropu_raraunga = RopuRaraunga {
         // Whakatungia nga apure i konei mena e tika ana
@@ -56,7 +56,7 @@ fn main() {
         apure2: 24,
     };
 
-    // Whakamatautau i te whakamārama
+    // Whakamatautau i te whakamaramatia
     whakamaramatia_korero("rerehangu");
 
     // Tauira whakahaere konae
