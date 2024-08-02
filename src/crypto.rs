@@ -2,7 +2,7 @@ use ring::digest::{Context, SHA256};
 use ring::hmac;
 use ring::signature::{EcdsaKeyPair, KeyPair, ECDSA_P256_SHA256_FIXED_SIGNING, ECDSA_P256_SHA256_FIXED};
 use ring::rand::SystemRandom;
-use ring::signature::{self, UnparsedPublicKey};
+use ring::signature::{UnparsedPublicKey};
 use std::error::Error;
 
 // Whakamunatia nga raraunga (Hash data)

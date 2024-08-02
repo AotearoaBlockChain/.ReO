@@ -5,11 +5,11 @@ mod manage;
 mod reo;
 mod crypto;
 
-use crate::consensus::{Purotu, RopuRaraunga, whakamana, tumomo_hoko};
+use crate::consensus::{Purotu, RopuRaraunga, whakamana};
 use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
 use crate::manage::HangangaKonae;
 use crate::crypto::{hangaia_kiwaha_matua, waitohua_raraunga, whakau_waitohu};
-use crate::reo::{ReoScript, whakamuna_raraunga, hangaia_hmac, tapirihia_konae, mukua_konae, rarangi_konae};
+use crate::reo::{ReoScript};
 
 fn main() {
     let whakahau = vec![
