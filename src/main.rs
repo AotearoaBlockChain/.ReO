@@ -30,6 +30,49 @@ fn main() {
     }
 
     // Example ECDSA usage
+
+    let waehere = "whakamuna_raraunga";
+    let hotaka = ReoScript::hou(waehere);
+    hotaka.whakahaere();
+
+    let waehere = "hangaia_hmac";
+    let hotaka = ReoScript::hou(waehere);
+    hotaka.whakahaere();
+
+    let waehere = "tātari_raraunga";
+    let hotaka = ReoScript::hou(waehere);
+    hotaka.whakahaere();
+
+    let mut ropu_raraunga = RopuRaraunga {
+        // Whakatūngia ngā āpure i konei mēnā e tika ana
+    };
+    let taura = Purotu {
+        // Whakatūngia ngā āpure i konei mēnā e tika ana
+    };
+
+    whakamana(&mut ropu_raraunga, taura);
+
+    let tauira = TauiraHanganga {
+        apure1: "Tauira".to_string(),
+        apure2: 42,
+    };
+
+    let whakamaamatanga = Whakamaamatanga {
+        apure1: "Whakamaamatanga".to_string(),
+        apure2: 24,
+    };
+
+    // Whakamātautau i te whakamārama
+    whakamaramatia_korero("rerehangu");
+
+    // Tauira whakahaere kōnae
+    let konae = HangangaKonae::hou("Tauira Konae".to_string(), 1024);
+    konae.tapirihia_konae("tauira.txt");
+    konae.muku_konae("tauira.txt");
+    konae.rarangi_konae();
+
+    // Tauira ECDSA
+>>>>>>> a719156a9e4dafdb76a81c779e6dcd594083b4be
     match hangaia_kiwaha_matua() {
         Ok((ki_muna, ki_tumatanui)) => {
             let raraunga = b"tauira raraunga".to_vec();
