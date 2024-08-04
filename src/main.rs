@@ -72,7 +72,6 @@ fn main() {
     konae.rarangi_konae();
 
     // Tauira ECDSA
->>>>>>> a719156a9e4dafdb76a81c779e6dcd594083b4be
     match hangaia_kiwaha_matua() {
         Ok((ki_muna, ki_tumatanui)) => {
             let raraunga = b"tauira raraunga".to_vec();

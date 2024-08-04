@@ -13,18 +13,14 @@ pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
     Ok(hex::encode(whakamuna.as_ref()))
 }
 
-<<<<<<< HEAD
 // Create HMAC
-=======
 // Waihangahia te HMAC (Create HMAC)
->>>>>>> a719156a9e4dafdb76a81c779e6dcd594083b4be
 pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
     let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     Ok(hex::encode(waitohu.as_ref()))
 }
 
-<<<<<<< HEAD
 // Add a file
 pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     let ara = Path::new(ingoa);
