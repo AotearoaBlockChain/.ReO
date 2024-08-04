@@ -8,7 +8,6 @@ use std::fs::{self, File};
 use std::path::Path;
 use hex;
 
-// Hash data
 // Whakamuna raraunga (Hash data)
 pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
     let mut horopaki = Context::new(&SHA256);
@@ -17,7 +16,6 @@ pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
     Ok(hex::encode(whakamuna.as_ref()))
 }
 
-// Create HMAC
 // Waihangahia te HMAC (Create HMAC)
 pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
@@ -25,7 +23,6 @@ pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> 
     Ok(hex::encode(waitohu.as_ref()))
 }
 
-// Add a file
 // Tapirihia he konae (Add a file)
 pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     let ara = Path::new(ingoa);
@@ -34,7 +31,6 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// Delete a file
 // Mukua he konae (Delete a file)
 pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     let ara = Path::new(ingoa);
@@ -45,27 +41,27 @@ pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
 
 // Main function
 fn main() {
-    // Example usage of the functions
+    // Tauira whakamahi (Example usage of the functions)
     let raraunga = "Hello, world!";
     match whakamuna_raraunga(raraunga) {
-        Ok(hash) => println!("Hash: {}", hash),
-        Err(e) => eprintln!("Error hashing data: {}", e),
+        Ok(hash) => println!("Whakamuna: {}", hash),
+        Err(e) => eprintln!("Hapa whakamuna raraunga: {}", e),
     }
 
     let ki = "supersecretkey";
     match hangaia_hmac(ki, raraunga) {
         Ok(hmac) => println!("HMAC: {}", hmac),
-        Err(e) => eprintln!("Error creating HMAC: {}", e),
+        Err(e) => eprintln!("Hapa hanga HMAC: {}", e),
     }
 
-    let ingoa_konae = "example.txt";
+    let ingoa_konae = "tauira.txt";
     match tapirihia_konae(ingoa_konae) {
-        Ok(()) => println!("File created successfully."),
-        Err(e) => eprintln!("Error creating file: {}", e),
+        Ok(()) => println!("Konae kua tapirihia: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa tapiri konae: {}", e),
     }
 
     match mukua_konae(ingoa_konae) {
-        Ok(()) => println!("File deleted successfully."),
-        Err(e) => eprintln!("Error deleting file: {}", e),
+        Ok(()) => println!("Konae kua mukua: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa muku konae: {}", e),
     }
 }
