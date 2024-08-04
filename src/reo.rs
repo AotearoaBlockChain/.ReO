@@ -1,14 +1,8 @@
 use ring::digest::{Context, SHA256};
 use ring::hmac;
-<<<<<<< HEAD
-use std::fs::{self, File};
-use std::path::Path;
-use std::collections::HashMap;
-=======
 use ring::signature::{EcdsaKeyPair, KeyPair, ECDSA_P256_SHA256_FIXED_SIGNING, ECDSA_P256_SHA256_FIXED};
 use ring::rand::SystemRandom;
 use ring::signature::{self, UnparsedPublicKey};
->>>>>>> a719156a9e4dafdb76a81c779e6dcd594083b4be
 use std::error::Error;
 
 // Hash data
