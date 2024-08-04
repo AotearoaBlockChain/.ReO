@@ -14,6 +14,7 @@ pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
 }
 
 // Create HMAC
+=======
 // Waihangahia te HMAC (Create HMAC)
 pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
