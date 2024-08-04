@@ -42,3 +42,30 @@ pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     println!("Konae '{}' kua mukua", ingoa);
     Ok(())
 }
+
+// Main function
+fn main() {
+    // Example usage of the functions
+    let raraunga = "Hello, world!";
+    match whakamuna_raraunga(raraunga) {
+        Ok(hash) => println!("Hash: {}", hash),
+        Err(e) => eprintln!("Error hashing data: {}", e),
+    }
+
+    let ki = "supersecretkey";
+    match hangaia_hmac(ki, raraunga) {
+        Ok(hmac) => println!("HMAC: {}", hmac),
+        Err(e) => eprintln!("Error creating HMAC: {}", e),
+    }
+
+    let ingoa_konae = "example.txt";
+    match tapirihia_konae(ingoa_konae) {
+        Ok(()) => println!("File created successfully."),
+        Err(e) => eprintln!("Error creating file: {}", e),
+    }
+
+    match mukua_konae(ingoa_konae) {
+        Ok(()) => println!("File deleted successfully."),
+        Err(e) => eprintln!("Error deleting file: {}", e),
+    }
+}
