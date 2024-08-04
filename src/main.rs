@@ -1,103 +1,44 @@
-mod compile;
-mod consensus;
-mod interpretation;
-mod manage;
-mod reo;
-mod crypto;
-mod blockchain;
-mod network;
+use ring::digest::{Context, SHA256};
+use ring::hmac;
+use ring::signature::{EcdsaKeyPair, KeyPair, ECDSA_P256_SHA256_FIXED_SIGNING};
+use ring::rand::SystemRandom;
+use ring::signature::{self, UnparsedPublicKey};
+use std::error::Error;
+use std::fs::{self, File};
+use std::path::Path;
+use hex;
 
-use crate::consensus::{Purotu, RopuRaraunga, whakamana, tumomo_hoko};
-use crate::interpretation::{TauiraHanganga, Whakamaamatanga, whakamaramatia_korero};
-use crate::manage::HangangaKonae;
-use crate::crypto::{hangaia_kiwaha_matua, waitohua_raraunga, whakau_waitohu};
-use crate::reo::{ReoScript, whakamuna_raraunga, hangaia_hmac, tapirihia_konae, mukua_konae, rarangi_konae};
-use crate::blockchain::{Poraka, WhatungaPoraka};
-use crate::network::WhatungaKnode;
+// Hash data
+// Whakamuna raraunga (Hash data)
+pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
+    let mut horopaki = Context::new(&SHA256);
+    horopaki.update(raraunga.as_bytes());
+    let whakamuna = horopaki.finish();
+    Ok(hex::encode(whakamuna.as_ref()))
+}
 
-fn main() {
-    let commands = vec![
-        ("whakamuna_raraunga", vec!["etahi raraunga hei whakamuna".to_string()]),
-        ("hangaia_hmac", vec!["ki_muna".to_string(), "etahi raraunga hei waitohu".to_string()]),
-        ("tapirihia_konae", vec!["tauira.txt".to_string()]),
-        ("mukua_konae", vec!["tauira.txt".to_string()]),
-        ("rarangi_konae", vec![]),
-    ];
+// Create HMAC
+// Waihangahia te HMAC (Create HMAC)
+pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
+    let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
+    let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
+    Ok(hex::encode(waitohu.as_ref()))
+}
 
-    for (waehere, params) in commands {
-        let hotaka = ReoScript::hou(waehere, params);
-        hotaka.whakahaere();
-    }
+// Add a file
+// Tapirihia he konae (Add a file)
+pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
+    let ara = Path::new(ingoa);
+    File::create(&ara)?;
+    println!("Konae '{}' kua tapirihia", ingoa);
+    Ok(())
+}
 
-    // Example ECDSA usage
-
-    let waehere = "whakamuna_raraunga";
-    let hotaka = ReoScript::hou(waehere);
-    hotaka.whakahaere();
-
-    let waehere = "hangaia_hmac";
-    let hotaka = ReoScript::hou(waehere);
-    hotaka.whakahaere();
-
-    let waehere = "tātari_raraunga";
-    let hotaka = ReoScript::hou(waehere);
-    hotaka.whakahaere();
-
-    let mut ropu_raraunga = RopuRaraunga {
-        // Whakatūngia ngā āpure i konei mēnā e tika ana
-    };
-    let taura = Purotu {
-        // Whakatūngia ngā āpure i konei mēnā e tika ana
-    };
-
-    whakamana(&mut ropu_raraunga, taura);
-
-    let tauira = TauiraHanganga {
-        apure1: "Tauira".to_string(),
-        apure2: 42,
-    };
-
-    let whakamaamatanga = Whakamaamatanga {
-        apure1: "Whakamaamatanga".to_string(),
-        apure2: 24,
-    };
-
-    // Whakamātautau i te whakamārama
-    whakamaramatia_korero("rerehangu");
-
-    // Tauira whakahaere kōnae
-    let konae = HangangaKonae::hou("Tauira Konae".to_string(), 1024);
-    konae.tapirihia_konae("tauira.txt");
-    konae.muku_konae("tauira.txt");
-    konae.rarangi_konae();
-
-    // Tauira ECDSA
-    match hangaia_kiwaha_matua() {
-        Ok((ki_muna, ki_tumatanui)) => {
-            let raraunga = b"tauira raraunga".to_vec();
-            match waitohua_raraunga(&ki_muna, &raraunga) {
-                Ok(waitohu) => {
-                    match whakau_waitohu(&ki_tumatanui, &raraunga, &waitohu) {
-                        Ok(he_tika) => println!("He tika te waitohu: {}", he_tika),
-                        Err(e) => println!("Hapa i te whakau waitohu: {}", e),
-                    }
-                },
-                Err(e) => println!("Hapa i te waitohua raraunga: {}", e),
-            }
-        },
-        Err(e) => println!("Hapa i te waihanga kiwaha matua: {}", e),
-    }
-
-    // Blockchain example
-    let mut whatunga_poraka = WhatungaPoraka::hou();
-    whatunga_poraka.tapiri_poraka("Raraunga tuarua".to_string());
-    if whatunga_poraka.he_tika_te_mekameka() {
-        println!("He tika te mekameka poraka");
-    } else {
-        println!("Kua kino te mekameka poraka");
-    }
-
-    // Network example
-    let knode = WhatungaKnode::hou("127.0.0.1:8080".to_string());
-    knode.timata();
+// Delete a file
+// Mukua he konae (Delete a file)
+pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
+    let ara = Path::new(ingoa);
+    fs::remove_file(&ara)?;
+    println!("Konae '{}' kua mukua", ingoa);
+    Ok(())
 }
