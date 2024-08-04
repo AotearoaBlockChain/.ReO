@@ -139,4 +139,3 @@ pub fn whakau_waitohu(ki_tumatanui: &[u8], raraunga: &[u8], waitohu: &[u8]) -> R
     let ki_tumatanui = UnparsedPublicKey::new(&ECDSA_P256_SHA256_FIXED, ki_tumatanui);
     ki_tumatanui.verify(raraunga, waitohu).map_err(|_| "Waitohu kāore i te tika".into())
 }
->>>>>>> a719156a9e4dafdb76a81c779e6dcd594083b4be
