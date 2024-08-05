@@ -1,5 +1,7 @@
 use ring::digest::{Context, SHA256};
 use ring::hmac;
+use ring::rand::{SecureRandom, SystemRandom};
+use ring::aead::{Aad, BoundKey, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
 use std::error::Error;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
@@ -19,6 +21,34 @@ pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> 
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
     let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     Ok(hex::encode(waitohu.as_ref()))
+}
+
+// Generate a random key
+pub fn waihanga_kī() -> Result<String, Box<dyn Error>> {
+    let rng = SystemRandom::new();
+    let mut key = [0u8; 32];
+    rng.fill(&mut key)?;
+    Ok(hex::encode(key))
+}
+
+// Encrypt data
+pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+    let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
+    let nonce = Nonce::assume_unique_for_key([0u8; 12]);
+    let mut in_out = raraunga.to_vec();
+    let key = LessSafeKey::new(unbound_key);
+    key.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out)?;
+    Ok(in_out)
+}
+
+// Decrypt data
+pub fn wetekina_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+    let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
+    let nonce = Nonce::assume_unique_for_key([0u8; 12]);
+    let mut in_out = raraunga.to_vec();
+    let key = LessSafeKey::new(unbound_key);
+    key.open_in_place(nonce, Aad::empty(), &mut in_out)?;
+    Ok(in_out)
 }
 
 // Tapirihia he konae (Add a file)
@@ -91,6 +121,17 @@ fn main() {
         Ok(()) => println!("Konae kua mukua: '{}'", ingoa_konae),
         Err(e) => eprintln!("Hapa muku konae: {}", e),
     }
+
+    // Test cryptographic functions
+    match waihanga_kī() {
+        Ok(kī) => println!("Generated key: {}", kī),
+        Err(e) => eprintln!("Hapa waihanga kī: {}", e),
+    }
+
+    let kī = waihanga_kī().unwrap().into_bytes();
+    let encrypted = whakamuna_raraunga_aead(&kī, raraunga.as_bytes()).unwrap();
+    let decrypted = wetekina_raraunga_aead(&kī, &encrypted).unwrap();
+    println!("Decrypted data: {}", String::from_utf8(decrypted).unwrap());
 }
 
 #[cfg(test)]
@@ -132,7 +173,6 @@ mod tests {
         let result = hangaia_hmac(key, data);
         assert!(result.is_ok());
         let hmac = result.unwrap();
-        // Correct the expected HMAC value here if necessary
         assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f"); // Expected HMAC for "Hello, world!" with empty key
     }
 
@@ -223,4 +263,31 @@ mod tests {
         assert_eq!(file_content, format!("{}{}", initial_content, append_content)); // Expected content to be concatenated
         let _ = fs::remove_file(filename); // Clean up
     }
-}
+
+    #[test]
+    fn test_waihanga_kī() {
+        let result = waihanga_kī();
+        assert!(result.is_ok());
+        let key = result.unwrap();
+        assert_eq!(key.len(), 64); // Expected length for a 256-bit key in hex
+    }
+
+    #[test]
+    fn test_whakamuna_raraunga_aead() {
+        let key = waihanga_kī().unwrap();
+        let data = "Sensitive data.";
+        let encrypted = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes());
+        assert!(encrypted.is_ok());
+    }
+
+    #[test]
+    fn test_wetekina_raraunga_aead() {
+        let key = waihanga_kī().unwrap();
+        let data = "Sensitive data.";
+        let encrypted = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes()).unwrap();
+        let decrypted = wetekina_raraunga_aead(&hex::decode(&key).unwrap(), &encrypted);
+        assert!(decrypted.is_ok());
+        let decrypted_data = String::from_utf8(decrypted.unwrap()).unwrap();
+        assert_eq!(decrypted_data, data); // Expected decrypted data to match original data
+    }
+    }
