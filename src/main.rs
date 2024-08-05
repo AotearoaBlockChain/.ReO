@@ -1,8 +1,5 @@
 use ring::digest::{Context, SHA256};
 use ring::hmac;
-use ring::signature::{EcdsaKeyPair, KeyPair, ECDSA_P256_SHA256_FIXED_SIGNING};
-use ring::rand::SystemRandom;
-use ring::signature::{self, UnparsedPublicKey};
 use std::error::Error;
 use std::fs::{self, File};
 use std::path::Path;
