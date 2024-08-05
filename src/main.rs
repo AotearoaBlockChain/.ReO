@@ -65,16 +65,17 @@ pub fn waihanga_kī() -> Result<String, ReOError> {
 // Encrypt data
 pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
     let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
-    let nonce = {
+    let nonce_bytes = {
         let rng = SystemRandom::new();
         let mut nonce = [0u8; 12];
         rng.fill(&mut nonce)?;
-        Nonce::assume_unique_for_key(nonce)
+        nonce
     };
+    let nonce = Nonce::assume_unique_for_key(nonce_bytes);
     let mut in_out = raraunga.to_vec();
     let key = LessSafeKey::new(unbound_key);
     key.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out)?;
-    Ok((nonce.as_ref().to_vec(), in_out))
+    Ok((nonce_bytes.to_vec(), in_out))
 }
 
 // Decrypt data
