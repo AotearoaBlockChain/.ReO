@@ -1,7 +1,8 @@
 use ring::digest::{Context, SHA256};
 use ring::hmac;
 use std::error::Error;
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
+use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
 
@@ -39,6 +40,22 @@ pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+// Pānuihia he konae (Read from a file)
+pub fn panuihia_konae(ingoa: &str) -> Result<String, Box<dyn Error>> {
+    let mut ara = File::open(ingoa)?;
+    let mut ihirangi = String::new();
+    ara.read_to_string(&mut ihirangi)?;
+    Ok(ihirangi)
+}
+
+// Tāpirihia raraunga ki te konae (Append data to a file)
+pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), Box<dyn Error>> {
+    let mut ara = OpenOptions::new().append(true).open(ingoa)?;
+    ara.write_all(raraunga.as_bytes())?;
+    println!("Raraunga kua tāpirihia ki te konae '{}'", ingoa);
+    Ok(())
+}
+
 // Main function
 fn main() {
     // Tauira whakamahi (Example usage of the functions)
@@ -58,6 +75,16 @@ fn main() {
     match tapirihia_konae(ingoa_konae) {
         Ok(()) => println!("Konae kua tapirihia: '{}'", ingoa_konae),
         Err(e) => eprintln!("Hapa tapiri konae: {}", e),
+    }
+
+    match panuihia_konae(ingoa_konae) {
+        Ok(ihirangi) => println!("Ihirangi o te konae: '{}'", ihirangi),
+        Err(e) => eprintln!("Hapa pānui konae: {}", e),
+    }
+
+    match tapirihia_raraunga(ingoa_konae, "\nHe rārangi anō.") {
+        Ok(()) => println!("Raraunga kua tāpirihia ki te konae: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa tāpiri raraunga ki te konae: {}", e),
     }
 
     match mukua_konae(ingoa_konae) {
@@ -164,4 +191,36 @@ mod tests {
         let result = hangaia_hmac(key, &data);
         assert!(result.is_ok());
     }
-        }
+
+    #[test]
+    fn test_panuihia_konae() {
+        let filename = "testfile.txt";
+        let content = "This is a test content.";
+        let _ = fs::write(filename, content); // Write content to the file
+        let result = panuihia_konae(filename);
+        assert!(result.is_ok());
+        let file_content = result.unwrap();
+        assert_eq!(file_content, content); // Expected content to match the written content
+        let _ = fs::remove_file(filename); // Clean up
+    }
+
+    #[test]
+    fn test_panuihia_konae_nonexistent() {
+        let filename = "nonexistentfile.txt";
+        let result = panuihia_konae(filename);
+        assert!(result.is_err()); // Expect an error since the file doesn't exist
+    }
+
+    #[test]
+    fn test_tapirihia_raraunga() {
+        let filename = "testfile.txt";
+        let initial_content = "Initial content.";
+        let append_content = " Appended content.";
+        let _ = fs::write(filename, initial_content); // Write initial content to the file
+        let result = tapirihia_raraunga(filename, append_content);
+        assert!(result.is_ok());
+        let file_content = fs::read_to_string(filename).unwrap();
+        assert_eq!(file_content, format!("{}{}", initial_content, append_content)); // Expected content to be concatenated
+        let _ = fs::remove_file(filename); // Clean up
+    }
+}
