@@ -1,5 +1,7 @@
 use ring::digest::{Context, SHA256};
 use ring::hmac;
+use ring::rand::SystemRandom;
+use ring::signature::{self, EcdsaKeyPair, KeyPair, ECDSA_P256_SHA256_FIXED_SIGNING};
 use std::error::Error;
 use std::fs::{self, File};
 use std::path::Path;
@@ -62,3 +64,45 @@ fn main() {
         Err(e) => eprintln!("Hapa muku konae: {}", e),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_whakamuna_raraunga() {
+        let data = "Hello, world!";
+        let result = whakamuna_raraunga(data);
+        assert!(result.is_ok());
+        let hash = result.unwrap();
+        assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3"); // Expected hash for "Hello, world!"
+    }
+
+    #[test]
+    fn test_hangaia_hmac() {
+        let data = "Hello, world!";
+        let key = "supersecretkey";
+        let result = hangaia_hmac(key, data);
+        assert!(result.is_ok());
+        let hmac = result.unwrap();
+        assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd"); // Expected HMAC for "Hello, world!" with key "supersecretkey"
+    }
+
+    #[test]
+    fn test_tapirihia_konae() {
+        let filename = "testfile.txt";
+        let result = tapirihia_konae(filename);
+        assert!(result.is_ok());
+        assert!(Path::new(filename).exists());
+        let _ = fs::remove_file(filename); // Clean up
+    }
+
+    #[test]
+    fn test_mukua_konae() {
+        let filename = "testfile.txt";
+        let _ = File::create(filename); // Ensure the file exists
+        let result = mukua_konae(filename);
+        assert!(result.is_ok());
+        assert!(!Path::new(filename).exists());
+    }
+    }
