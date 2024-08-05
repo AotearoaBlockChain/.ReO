@@ -327,4 +327,4 @@ mod tests {
         let decrypted_data = String::from_utf8(decrypted.unwrap()).unwrap();
         assert_eq!(decrypted_data, data); // Expected decrypted data to match original data
     }
-    }
+}
