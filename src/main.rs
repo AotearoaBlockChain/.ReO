@@ -79,6 +79,15 @@ mod tests {
     }
 
     #[test]
+    fn test_whakamuna_raraunga_empty() {
+        let data = "";
+        let result = whakamuna_raraunga(data);
+        assert!(result.is_ok());
+        let hash = result.unwrap();
+        assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); // Expected hash for empty string
+    }
+
+    #[test]
     fn test_hangaia_hmac() {
         let data = "Hello, world!";
         let key = "supersecretkey";
@@ -86,6 +95,16 @@ mod tests {
         assert!(result.is_ok());
         let hmac = result.unwrap();
         assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd"); // Expected HMAC for "Hello, world!" with key "supersecretkey"
+    }
+
+    #[test]
+    fn test_hangaia_hmac_empty_key() {
+        let data = "Hello, world!";
+        let key = "";
+        let result = hangaia_hmac(key, data);
+        assert!(result.is_ok());
+        let hmac = result.unwrap();
+        assert_eq!(hmac, "63c8f2b432c649da5b788e660e8a98f6497d89c85f8795fbc4e57911d123cdf8"); // Expected HMAC for "Hello, world!" with empty key
     }
 
     #[test]
@@ -98,6 +117,15 @@ mod tests {
     }
 
     #[test]
+    fn test_tapirihia_konae_existing_file() {
+        let filename = "testfile.txt";
+        let _ = File::create(filename);
+        let result = tapirihia_konae(filename);
+        assert!(result.is_err()); // Expect an error because the file already exists
+        let _ = fs::remove_file(filename); // Clean up
+    }
+
+    #[test]
     fn test_mukua_konae() {
         let filename = "testfile.txt";
         let _ = File::create(filename); // Ensure the file exists
@@ -105,4 +133,33 @@ mod tests {
         assert!(result.is_ok());
         assert!(!Path::new(filename).exists());
     }
+
+    #[test]
+    fn test_mukua_konae_nonexistent() {
+        let filename = "nonexistentfile.txt";
+        let result = mukua_konae(filename);
+        assert!(result.is_err()); // Expect an error since the file doesn't exist
     }
+
+    #[test]
+    fn test_mukua_konae_permission_denied() {
+        let filename = "/root/testfile.txt";
+        let result = mukua_konae(filename);
+        assert!(result.is_err()); // Expect an error due to permission denied
+    }
+
+    #[test]
+    fn test_large_input_whakamuna() {
+        let data = "a".repeat(10_000);
+        let result = whakamuna_raraunga(&data);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_large_input_hangaia_hmac() {
+        let data = "a".repeat(10_000);
+        let key = "supersecretkey";
+        let result = hangaia_hmac(key, &data);
+        assert!(result.is_ok());
+    }
+                }
