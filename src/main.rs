@@ -63,19 +63,24 @@ pub fn waihanga_kī() -> Result<String, ReOError> {
 }
 
 // Encrypt data
-pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, ReOError> {
+pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
     let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
-    let nonce = Nonce::assume_unique_for_key([0u8; 12]);
+    let nonce = {
+        let rng = SystemRandom::new();
+        let mut nonce = [0u8; 12];
+        rng.fill(&mut nonce)?;
+        Nonce::assume_unique_for_key(nonce)
+    };
     let mut in_out = raraunga.to_vec();
     let key = LessSafeKey::new(unbound_key);
     key.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out)?;
-    Ok(in_out)
+    Ok((nonce.as_ref().to_vec(), in_out))
 }
 
 // Decrypt data
-pub fn wetekina_raraunga_aead(kī: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
+pub fn wetekina_raraunga_aead(kī: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
     let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
-    let nonce = Nonce::assume_unique_for_key([0u8; 12]);
+    let nonce = Nonce::try_assume_unique_for_key(nonce)?;
     let mut in_out = whakamuna.to_vec();
     let key = LessSafeKey::new(unbound_key);
     key.open_in_place(nonce, Aad::empty(), &mut in_out)?;
@@ -160,8 +165,8 @@ fn main() {
     }
 
     let kī = waihanga_kī().unwrap().into_bytes();
-    let encrypted = whakamuna_raraunga_aead(&kī, raraunga.as_bytes()).unwrap();
-    let decrypted = wetekina_raraunga_aead(&kī, &encrypted).unwrap();
+    let (nonce, encrypted) = whakamuna_raraunga_aead(&kī, raraunga.as_bytes()).unwrap();
+    let decrypted = wetekina_raraunga_aead(&kī, &nonce, &encrypted).unwrap();
     println!("Decrypted data: {}", String::from_utf8(decrypted).unwrap());
 }
 
@@ -307,18 +312,18 @@ mod tests {
     fn test_whakamuna_raraunga_aead() {
         let key = waihanga_kī().unwrap();
         let data = "Sensitive data.";
-        let encrypted = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes());
-        assert!(encrypted.is_ok());
+        let (nonce, encrypted) = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes()).unwrap();
+        assert!(encrypted.len() > 0); // Ensure encryption was successful
     }
 
     #[test]
     fn test_wetekina_raraunga_aead() {
         let key = waihanga_kī().unwrap();
         let data = "Sensitive data.";
-        let encrypted = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes()).unwrap();
-        let decrypted = wetekina_raraunga_aead(&hex::decode(&key).unwrap(), &encrypted);
+        let (nonce, encrypted) = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes()).unwrap();
+        let decrypted = wetekina_raraunga_aead(&hex::decode(&key).unwrap(), &nonce, &encrypted);
         assert!(decrypted.is_ok());
         let decrypted_data = String::from_utf8(decrypted.unwrap()).unwrap();
         assert_eq!(decrypted_data, data); // Expected decrypted data to match original data
     }
-                }
+    }
