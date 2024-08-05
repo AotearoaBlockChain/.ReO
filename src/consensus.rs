@@ -79,4 +79,4 @@ mod tests {
         assert!(whakamana(&mut ropu_raraunga, purotu).is_ok());
         assert_eq!(ropu_raraunga.raraunga.len(), 1);
     }
-        }
+}
