@@ -1,15 +1,46 @@
 use ring::digest::{Context, SHA256};
 use ring::hmac;
 use ring::rand::{SecureRandom, SystemRandom};
-use ring::aead::{Aad, BoundKey, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
+use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
 use std::error::Error;
+use std::fmt;
 use std::fs::{self, File, OpenOptions};
-use std::io::{Read, Write};
+use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
 
+// Custom error type
+#[derive(Debug)]
+enum ReOError {
+    IoError(io::Error),
+    RingError(ring::error::Unspecified),
+}
+
+impl fmt::Display for ReOError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            ReOError::IoError(ref err) => write!(f, "IO error: {}", err),
+            ReOError::RingError(ref err) => write!(f, "Ring error: {:?}", err),
+        }
+    }
+}
+
+impl Error for ReOError {}
+
+impl From<io::Error> for ReOError {
+    fn from(err: io::Error) -> ReOError {
+        ReOError::IoError(err)
+    }
+}
+
+impl From<ring::error::Unspecified> for ReOError {
+    fn from(err: ring::error::Unspecified) -> ReOError {
+        ReOError::RingError(err)
+    }
+}
+
 // Whakamuna raraunga (Hash data)
-pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
+pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, ReOError> {
     let mut horopaki = Context::new(&SHA256);
     horopaki.update(raraunga.as_bytes());
     let whakamuna = horopaki.finish();
@@ -17,14 +48,14 @@ pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, Box<dyn Error>> {
 }
 
 // Waihangahia te HMAC (Create HMAC)
-pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, Box<dyn Error>> {
+pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, ReOError> {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
     let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     Ok(hex::encode(waitohu.as_ref()))
 }
 
 // Generate a random key
-pub fn waihanga_kī() -> Result<String, Box<dyn Error>> {
+pub fn waihanga_kī() -> Result<String, ReOError> {
     let rng = SystemRandom::new();
     let mut key = [0u8; 32];
     rng.fill(&mut key)?;
@@ -32,7 +63,7 @@ pub fn waihanga_kī() -> Result<String, Box<dyn Error>> {
 }
 
 // Encrypt data
-pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, ReOError> {
     let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
     let nonce = Nonce::assume_unique_for_key([0u8; 12]);
     let mut in_out = raraunga.to_vec();
@@ -42,20 +73,20 @@ pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, B
 }
 
 // Decrypt data
-pub fn wetekina_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+pub fn wetekina_raraunga_aead(kī: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
     let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
     let nonce = Nonce::assume_unique_for_key([0u8; 12]);
-    let mut in_out = raraunga.to_vec();
+    let mut in_out = whakamuna.to_vec();
     let key = LessSafeKey::new(unbound_key);
     key.open_in_place(nonce, Aad::empty(), &mut in_out)?;
     Ok(in_out)
 }
 
 // Tapirihia he konae (Add a file)
-pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
+pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     if ara.exists() {
-        return Err(Box::from("Konae already exists"));
+        return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "Konae already exists")));
     }
     File::create(&ara)?;
     println!("Konae '{}' kua tapirihia", ingoa);
@@ -63,7 +94,7 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
 }
 
 // Mukua he konae (Delete a file)
-pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
+pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     fs::remove_file(&ara)?;
     println!("Konae '{}' kua mukua", ingoa);
@@ -71,7 +102,7 @@ pub fn mukua_konae(ingoa: &str) -> Result<(), Box<dyn Error>> {
 }
 
 // Pānuihia he konae (Read from a file)
-pub fn panuihia_konae(ingoa: &str) -> Result<String, Box<dyn Error>> {
+pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
     let mut ara = File::open(ingoa)?;
     let mut ihirangi = String::new();
     ara.read_to_string(&mut ihirangi)?;
@@ -79,7 +110,7 @@ pub fn panuihia_konae(ingoa: &str) -> Result<String, Box<dyn Error>> {
 }
 
 // Tāpirihia raraunga ki te konae (Append data to a file)
-pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), Box<dyn Error>> {
+pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
     let mut ara = OpenOptions::new().append(true).open(ingoa)?;
     ara.write_all(raraunga.as_bytes())?;
     println!("Raraunga kua tāpirihia ki te konae '{}'", ingoa);
@@ -290,4 +321,4 @@ mod tests {
         let decrypted_data = String::from_utf8(decrypted.unwrap()).unwrap();
         assert_eq!(decrypted_data, data); // Expected decrypted data to match original data
     }
-    }
+                }
