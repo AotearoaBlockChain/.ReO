@@ -2,7 +2,7 @@ use ring::digest::{Context, SHA256};
 use ring::hmac;
 use std::error::Error;
 use std::fs::{self, File, OpenOptions};
-use std::io::{self, Read, Write};
+use std::io::{Read, Write};
 use std::path::Path;
 use hex;
 
