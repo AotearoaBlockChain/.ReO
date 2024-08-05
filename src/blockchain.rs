@@ -1,3 +1,5 @@
+// blockchain.rs
+
 pub struct Poraka {
     pub taupanga: u64,
     pub wa_timestamp: u128,
@@ -22,8 +24,8 @@ impl Poraka {
     }
 
     pub fn tatauria_hash(taupanga: u64, wa_timestamp: u128, hash_o_mua: &str, raraunga: &str, nonce: u64) -> String {
-        // Implement hash calculation using cryptographic function
-        format!("{}_{}_{}_{}_{}", taupanga, wa_timestamp, hash_o_mua, raraunga, nonce) // Example placeholder
+        // Whakamahia te mahi haumaru ki te tatau hash
+        format!("{}_{}_{}_{}_{}", taupanga, wa_timestamp, hash_o_mua, raraunga, nonce) // Tauira placeholder
     }
 
     pub fn maina_poraka(&mut self, uaua: usize) {
@@ -82,4 +84,4 @@ fn wa_o_naianei() -> u128 {
     use std::time::{SystemTime, UNIX_EPOCH};
     let wa_o_naianei = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
     wa_o_naianei.as_secs() as u128 * 1000 + wa_o_naianei.subsec_millis() as u128
-}
+            }
