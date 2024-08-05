@@ -9,7 +9,7 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
 
-// Custom error type
+// Momo hapa ritenga
 #[derive(Debug)]
 enum ReOError {
     IoError(io::Error),
@@ -54,60 +54,60 @@ pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, ReOError> {
     Ok(hex::encode(waitohu.as_ref()))
 }
 
-// Generate a random key
-pub fn waihanga_kī() -> Result<String, ReOError> {
+// Waihangahia he kī matapōkere (Generate a random key)
+pub fn waihanga_ki() -> Result<String, ReOError> {
     let rng = SystemRandom::new();
-    let mut key = [0u8; 32];
-    rng.fill(&mut key)?;
-    Ok(hex::encode(key))
+    let mut ki = [0u8; 32];
+    rng.fill(&mut ki)?;
+    Ok(hex::encode(ki))
 }
 
-// Encrypt data
-pub fn whakamuna_raraunga_aead(kī: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
-    let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
-    let nonce_bytes = {
+// Whakamuna raraunga (Encrypt data)
+pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
+    let ki_matapōkere = UnboundKey::new(&AES_256_GCM, ki)?;
+    let nonce_pūrua = {
         let rng = SystemRandom::new();
         let mut nonce = [0u8; 12];
         rng.fill(&mut nonce)?;
         nonce
     };
-    let nonce = Nonce::assume_unique_for_key(nonce_bytes);
+    let nonce = Nonce::assume_unique_for_key(nonce_pūrua);
     let mut in_out = raraunga.to_vec();
-    let key = LessSafeKey::new(unbound_key);
-    key.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out)?;
-    Ok((nonce_bytes.to_vec(), in_out))
+    let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
+    ki_pōwhiri.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out)?;
+    Ok((nonce_pūrua.to_vec(), in_out))
 }
 
-// Decrypt data
-pub fn wetekina_raraunga_aead(kī: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
-    let unbound_key = UnboundKey::new(&AES_256_GCM, kī)?;
+// Wetekina raraunga (Decrypt data)
+pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
+    let ki_matapōkere = UnboundKey::new(&AES_256_GCM, ki)?;
     let nonce = Nonce::try_assume_unique_for_key(nonce)?;
     let mut in_out = whakamuna.to_vec();
-    let key = LessSafeKey::new(unbound_key);
-    key.open_in_place(nonce, Aad::empty(), &mut in_out)?;
+    let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
+    ki_pōwhiri.open_in_place(nonce, Aad::empty(), &mut in_out)?;
     Ok(in_out)
 }
 
-// Tapirihia he konae (Add a file)
+// Tapirihia he kōnae (Add a file)
 pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     if ara.exists() {
-        return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "Konae already exists")));
+        return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "Kōnae already exists")));
     }
     File::create(&ara)?;
-    println!("Konae '{}' kua tapirihia", ingoa);
+    println!("Kōnae '{}' kua tapirihia", ingoa);
     Ok(())
 }
 
-// Mukua he konae (Delete a file)
+// Mukua he kōnae (Delete a file)
 pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     fs::remove_file(&ara)?;
-    println!("Konae '{}' kua mukua", ingoa);
+    println!("Kōnae '{}' kua mukua", ingoa);
     Ok(())
 }
 
-// Pānuihia he konae (Read from a file)
+// Pānuihia he kōnae (Read from a file)
 pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
     let mut ara = File::open(ingoa)?;
     let mut ihirangi = String::new();
@@ -115,11 +115,11 @@ pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
     Ok(ihirangi)
 }
 
-// Tāpirihia raraunga ki te konae (Append data to a file)
+// Tāpirihia raraunga ki te kōnae (Append data to a file)
 pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
     let mut ara = OpenOptions::new().append(true).open(ingoa)?;
     ara.write_all(raraunga.as_bytes())?;
-    println!("Raraunga kua tāpirihia ki te konae '{}'", ingoa);
+    println!("Raraunga kua tāpirihia ki te kōnae '{}'", ingoa);
     Ok(())
 }
 
@@ -140,34 +140,34 @@ fn main() {
 
     let ingoa_konae = "tauira.txt";
     match tapirihia_konae(ingoa_konae) {
-        Ok(()) => println!("Konae kua tapirihia: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa tapiri konae: {}", e),
+        Ok(()) => println!("Kōnae kua tapirihia: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa tapiri kōnae: {}", e),
     }
 
     match panuihia_konae(ingoa_konae) {
-        Ok(ihirangi) => println!("Ihirangi o te konae: '{}'", ihirangi),
-        Err(e) => eprintln!("Hapa pānui konae: {}", e),
+        Ok(ihirangi) => println!("Ihirangi o te kōnae: '{}'", ihirangi),
+        Err(e) => eprintln!("Hapa pānui kōnae: {}", e),
     }
 
     match tapirihia_raraunga(ingoa_konae, "\nHe rārangi anō.") {
-        Ok(()) => println!("Raraunga kua tāpirihia ki te konae: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa tāpiri raraunga ki te konae: {}", e),
+        Ok(()) => println!("Raraunga kua tāpirihia ki te kōnae: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa tāpiri raraunga ki te kōnae: {}", e),
     }
 
     match mukua_konae(ingoa_konae) {
-        Ok(()) => println!("Konae kua mukua: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa muku konae: {}", e),
+        Ok(()) => println!("Kōnae kua mukua: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa muku kōnae: {}", e),
     }
 
     // Test cryptographic functions
-    match waihanga_kī() {
-        Ok(kī) => println!("Generated key: {}", kī),
+    match waihanga_ki() {
+        Ok(ki) => println!("Generated key: {}", ki),
         Err(e) => eprintln!("Hapa waihanga kī: {}", e),
     }
 
-    let kī = waihanga_kī().unwrap().into_bytes();
-    let (nonce, encrypted) = whakamuna_raraunga_aead(&kī, raraunga.as_bytes()).unwrap();
-    let decrypted = wetekina_raraunga_aead(&kī, &nonce, &encrypted).unwrap();
+    let ki = waihanga_ki().unwrap().into_bytes();
+    let (nonce, encrypted) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
+    let decrypted = wetekina_raraunga_aead(&ki, &nonce, &encrypted).unwrap();
     println!("Decrypted data: {}", String::from_utf8(decrypted).unwrap());
 }
 
@@ -177,8 +177,8 @@ mod tests {
 
     #[test]
     fn test_whakamuna_raraunga() {
-        let data = "Hello, world!";
-        let result = whakamuna_raraunga(data);
+        let raraunga = "Hello, world!";
+        let result = whakamuna_raraunga(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
         assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3"); // Expected hash for "Hello, world!"
@@ -186,8 +186,8 @@ mod tests {
 
     #[test]
     fn test_whakamuna_raraunga_empty() {
-        let data = "";
-        let result = whakamuna_raraunga(data);
+        let raraunga = "";
+        let result = whakamuna_raraunga(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
         assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); // Expected hash for empty string
@@ -195,9 +195,9 @@ mod tests {
 
     #[test]
     fn test_hangaia_hmac() {
-        let data = "Hello, world!";
-        let key = "supersecretkey";
-        let result = hangaia_hmac(key, data);
+        let raraunga = "Hello, world!";
+        let ki = "supersecretkey";
+        let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
         assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd"); // Expected HMAC for "Hello, world!" with key "supersecretkey"
@@ -205,9 +205,9 @@ mod tests {
 
     #[test]
     fn test_hangaia_hmac_empty_key() {
-        let data = "Hello, world!";
-        let key = "";
-        let result = hangaia_hmac(key, data);
+        let raraunga = "Hello, world!";
+        let ki = "";
+        let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
         assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f"); // Expected HMAC for "Hello, world!" with empty key
@@ -215,116 +215,116 @@ mod tests {
 
     #[test]
     fn test_tapirihia_konae() {
-        let filename = "testfile.txt";
-        let result = tapirihia_konae(filename);
+        let ingoa_konae = "testfile.txt";
+        let result = tapirihia_konae(ingoa_konae);
         assert!(result.is_ok());
-        assert!(Path::new(filename).exists());
-        let _ = fs::remove_file(filename); // Clean up
+        assert!(Path::new(ingoa_konae).exists());
+        let _ = fs::remove_file(ingoa_konae); // Clean up
     }
 
     #[test]
     fn test_tapirihia_konae_existing_file() {
-        let filename = "testfile.txt";
-        let _ = File::create(filename);
-        let result = tapirihia_konae(filename);
+        let ingoa_konae = "testfile.txt";
+        let _ = File::create(ingoa_konae);
+        let result = tapirihia_konae(ingoa_konae);
         assert!(result.is_err()); // Expect an error because the file already exists
-        let _ = fs::remove_file(filename); // Clean up
+        let _ = fs::remove_file(ingoa_konae); // Clean up
     }
 
     #[test]
     fn test_mukua_konae() {
-        let filename = "testfile.txt";
-        let _ = File::create(filename); // Ensure the file exists
-        let result = mukua_konae(filename);
+        let ingoa_konae = "testfile.txt";
+        let _ = File::create(ingoa_konae); // Ensure the file exists
+        let result = mukua_konae(ingoa_konae);
         assert!(result.is_ok());
-        assert!(!Path::new(filename).exists());
+        assert!(!Path::new(ingoa_konae).exists());
     }
 
     #[test]
     fn test_mukua_konae_nonexistent() {
-        let filename = "nonexistentfile.txt";
-        let result = mukua_konae(filename);
+        let ingoa_konae = "nonexistentfile.txt";
+        let result = mukua_konae(ingoa_konae);
         assert!(result.is_err()); // Expect an error since the file doesn't exist
     }
 
     #[test]
     fn test_mukua_konae_permission_denied() {
-        let filename = "/root/testfile.txt";
-        let result = mukua_konae(filename);
+        let ingoa_konae = "/root/testfile.txt";
+        let result = mukua_konae(ingoa_konae);
         assert!(result.is_err()); // Expect an error due to permission denied
     }
 
     #[test]
     fn test_large_input_whakamuna() {
-        let data = "a".repeat(10_000);
-        let result = whakamuna_raraunga(&data);
+        let raraunga = "a".repeat(10_000);
+        let result = whakamuna_raraunga(&raraunga);
         assert!(result.is_ok());
     }
 
     #[test]
     fn test_large_input_hangaia_hmac() {
-        let data = "a".repeat(10_000);
-        let key = "supersecretkey";
-        let result = hangaia_hmac(key, &data);
+        let raraunga = "a".repeat(10_000);
+        let ki = "supersecretkey";
+        let result = hangaia_hmac(ki, &raraunga);
         assert!(result.is_ok());
     }
 
     #[test]
     fn test_panuihia_konae() {
-        let filename = "testfile.txt";
-        let content = "This is a test content.";
-        let _ = fs::write(filename, content); // Write content to the file
-        let result = panuihia_konae(filename);
+        let ingoa_konae = "testfile.txt";
+        let ihirangi = "This is a test content.";
+        let _ = fs::write(ingoa_konae, ihirangi); // Write content to the file
+        let result = panuihia_konae(ingoa_konae);
         assert!(result.is_ok());
-        let file_content = result.unwrap();
-        assert_eq!(file_content, content); // Expected content to match the written content
-        let _ = fs::remove_file(filename); // Clean up
+        let ihirangi_konae = result.unwrap();
+        assert_eq!(ihirangi_konae, ihirangi); // Expected content to match the written content
+        let _ = fs::remove_file(ingoa_konae); // Clean up
     }
 
     #[test]
     fn test_panuihia_konae_nonexistent() {
-        let filename = "nonexistentfile.txt";
-        let result = panuihia_konae(filename);
+        let ingoa_konae = "nonexistentfile.txt";
+        let result = panuihia_konae(ingoa_konae);
         assert!(result.is_err()); // Expect an error since the file doesn't exist
     }
 
     #[test]
     fn test_tapirihia_raraunga() {
-        let filename = "testfile.txt";
-        let initial_content = "Initial content.";
-        let append_content = " Appended content.";
-        let _ = fs::write(filename, initial_content); // Write initial content to the file
-        let result = tapirihia_raraunga(filename, append_content);
+        let ingoa_konae = "testfile.txt";
+        let ihirangi_tuakiri = "Initial content.";
+        let ihirangi_tapiri = " Appended content.";
+        let _ = fs::write(ingoa_konae, ihirangi_tuakiri); // Write initial content to the file
+        let result = tapirihia_raraunga(ingoa_konae, ihirangi_tapiri);
         assert!(result.is_ok());
-        let file_content = fs::read_to_string(filename).unwrap();
-        assert_eq!(file_content, format!("{}{}", initial_content, append_content)); // Expected content to be concatenated
-        let _ = fs::remove_file(filename); // Clean up
+        let ihirangi_konae = fs::read_to_string(ingoa_konae).unwrap();
+        assert_eq!(ihirangi_konae, format!("{}{}", ihirangi_tuakiri, ihirangi_tapiri)); // Expected content to be concatenated
+        let _ = fs::remove_file(ingoa_konae); // Clean up
     }
 
     #[test]
-    fn test_waihanga_kī() {
-        let result = waihanga_kī();
+    fn test_waihanga_ki() {
+        let result = waihanga_ki();
         assert!(result.is_ok());
-        let key = result.unwrap();
-        assert_eq!(key.len(), 64); // Expected length for a 256-bit key in hex
+        let ki = result.unwrap();
+        assert_eq!(ki.len(), 64); // Expected length for a 256-bit key in hex
     }
 
     #[test]
     fn test_whakamuna_raraunga_aead() {
-        let key = waihanga_kī().unwrap();
-        let data = "Sensitive data.";
-        let (nonce, encrypted) = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes()).unwrap();
-        assert!(encrypted.len() > 0); // Ensure encryption was successful
+        let ki = waihanga_ki().unwrap();
+        let raraunga = "Sensitive data.";
+        let (nonce, whakamuna) = whakamuna_raraunga_aead(&hex::decode(&ki).unwrap(), raraunga.as_bytes()).unwrap();
+        assert!(whakamuna.len() > 0); // Ensure encryption was successful
     }
 
     #[test]
     fn test_wetekina_raraunga_aead() {
-        let key = waihanga_kī().unwrap();
-        let data = "Sensitive data.";
-        let (nonce, encrypted) = whakamuna_raraunga_aead(&hex::decode(&key).unwrap(), data.as_bytes()).unwrap();
-        let decrypted = wetekina_raraunga_aead(&hex::decode(&key).unwrap(), &nonce, &encrypted);
-        assert!(decrypted.is_ok());
-        let decrypted_data = String::from_utf8(decrypted.unwrap()).unwrap();
-        assert_eq!(decrypted_data, data); // Expected decrypted data to match original data
+        let ki = waihanga_ki().unwrap();
+        let raraunga = "Sensitive data.";
+        let (nonce, whakamuna) = whakamuna_raraunga_aead(&hex::decode(&ki).unwrap(), raraunga.as_bytes()).unwrap();
+        let wetekina = wetekina_raraunga_aead(&hex::decode(&ki).unwrap(), &nonce, &whakamuna);
+        assert!(wetekina.is_ok());
+        let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
+        assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-        }
+            }
