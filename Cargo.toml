@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+warp = "0.3"
+tokio = { verion = "1", features = ["full"] }
 ring = "0.16.20"
 untrusted = "0.7"
 hex = "0.4"
