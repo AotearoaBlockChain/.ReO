@@ -23,12 +23,12 @@ fn main() {
 
     // Encrypt the data
     let mut in_out = data.to_vec();
-    key.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out).unwrap();
+    key.seal_in_place_append_tag(Nonce, Aad::empty(), &mut in_out).unwrap();
 
     println!("Encrypted data: {:?}", hex::encode(&in_out));
 
     // Decrypt the data
-    let decrypted_data = key.open_in_place(nonce, Aad::empty(), &mut in_out).unwrap();
+    let decrypted_data = key.open_in_place(Nonce, Aad::empty(), &mut in_out).unwrap();
     
     // Attempt to convert decrypted data to UTF-8, ignoring invalid sequences
     match str::from_utf8(decrypted_data) {
