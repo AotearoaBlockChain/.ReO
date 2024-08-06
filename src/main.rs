@@ -9,7 +9,7 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
 
-// Momo hapa ritenga
+// Custom error type
 #[derive(Debug)]
 enum ReOError {
     IoError(io::Error),
@@ -39,7 +39,7 @@ impl From<ring::error::Unspecified> for ReOError {
     }
 }
 
-// Whakamuna raraunga (Hash data)
+// Hash data
 pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, ReOError> {
     let mut horopaki = Context::new(&SHA256);
     horopaki.update(raraunga.as_bytes());
@@ -47,14 +47,14 @@ pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, ReOError> {
     Ok(hex::encode(whakamuna.as_ref()))
 }
 
-// Waihangahia te HMAC (Create HMAC)
+// Create HMAC
 pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, ReOError> {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
     let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     Ok(hex::encode(waitohu.as_ref()))
 }
 
-// Waihangahia he kī matapōkere (Generate a random key)
+// Generate a random key
 pub fn waihanga_ki() -> Result<String, ReOError> {
     let rng = SystemRandom::new();
     let mut ki = [0u8; 32];
@@ -62,7 +62,7 @@ pub fn waihanga_ki() -> Result<String, ReOError> {
     Ok(hex::encode(ki))
 }
 
-// Whakamuna raraunga (Encrypt data)
+// Encrypt data
 pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
     let ki_matapōkere = UnboundKey::new(&AES_256_GCM, ki)?;
     let nonce_pūrua = {
@@ -78,7 +78,7 @@ pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, V
     Ok((nonce_pūrua.to_vec(), in_out))
 }
 
-// Wetekina raraunga (Decrypt data)
+// Decrypt data
 pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
     let ki_matapōkere = UnboundKey::new(&AES_256_GCM, ki)?;
     let nonce = Nonce::try_assume_unique_for_key(nonce)?;
@@ -88,7 +88,7 @@ pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Resu
     Ok(in_out)
 }
 
-// Tapirihia he kōnae (Add a file)
+// Add a file
 pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     if ara.exists() {
@@ -99,7 +99,7 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
     Ok(())
 }
 
-// Mukua he kōnae (Delete a file)
+// Delete a file
 pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     fs::remove_file(&ara)?;
@@ -107,7 +107,7 @@ pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
     Ok(())
 }
 
-// Pānuihia he kōnae (Read from a file)
+// Read from a file
 pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
     let mut ara = File::open(ingoa)?;
     let mut ihirangi = String::new();
@@ -115,7 +115,7 @@ pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
     Ok(ihirangi)
 }
 
-// Tāpirihia raraunga ki te kōnae (Append data to a file)
+// Append data to a file
 pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
     let mut ara = OpenOptions::new().append(true).open(ingoa)?;
     ara.write_all(raraunga.as_bytes())?;
@@ -125,7 +125,7 @@ pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
 
 // Main function
 fn main() {
-    // Tauira whakamahi (Example usage of the functions)
+    // Example usage of the functions
     let raraunga = "Hello, world!";
     match whakamuna_raraunga(raraunga) {
         Ok(hash) => println!("Whakamuna: {}", hash),
@@ -165,10 +165,34 @@ fn main() {
         Err(e) => eprintln!("Hapa waihanga kī: {}", e),
     }
 
-    let ki = waihanga_ki().unwrap().into_bytes();
-    let (nonce, encrypted) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
-    let decrypted = wetekina_raraunga_aead(&ki, &nonce, &encrypted).unwrap();
-    println!("Decrypted data: {}", String::from_utf8(decrypted).unwrap());
+    let ki = match waihanga_ki() {
+        Ok(ki) => ki.into_bytes(),
+        Err(e) => {
+            eprintln!("Hapa waihanga kī: {}", e);
+            return;
+        }
+    };
+
+    let (nonce, encrypted) = match whakamuna_raraunga_aead(&ki, raraunga.as_bytes()) {
+        Ok((nonce, encrypted)) => (nonce, encrypted),
+        Err(e) => {
+            eprintln!("Hapa whakamuna raraunga: {}", e);
+            return;
+        }
+    };
+
+    let decrypted = match wetekina_raraunga_aead(&ki, &nonce, &encrypted) {
+        Ok(decrypted) => decrypted,
+        Err(e) => {
+            eprintln!("Hapa wetekina raraunga: {}", e);
+            return;
+        }
+    };
+
+    match String::from_utf8(decrypted) {
+        Ok(decrypted_str) => println!("Decrypted data: {}", decrypted_str),
+        Err(e) => eprintln!("Hapa wetekina raraunga: {}", e),
+    }
 }
 
 #[cfg(test)]
