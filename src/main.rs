@@ -406,4 +406,38 @@ mod tests {
         let ihirangi_tapiri = " Appended content.";
         let _ = std::fs::write(ingoa_konae, ihirangi_tuakiri); // Write initial content to the file
         let result = tapirihia_raraunga(ingoa_konae, ihirangi_tapiri);
-        assert!(result.is    
+        assert!(result.is_ok());
+        let ihirangi_konae = std::fs::read_to_string(ingoa_konae).unwrap();
+        assert_eq!(ihirangi_konae, format!("{}{}", ihirangi_tuakiri, ihirangi_tapiri)); // Expected content to be concatenated
+        let _ = std::fs::remove_file(ingoa_konae); // Clean up
+    }
+
+    #[test]
+    fn test_waihanga_ki() {
+        let result = waihanga_ki();
+        assert!(result.is_ok());
+        let ki = result.unwrap();
+        assert_eq!(ki.len(), 64); // Expected length for a 256-bit key in hex
+    }
+
+    #[test]
+    fn test_whakamuna_raraunga_aead() {
+        let ki = waihanga_ki().unwrap();
+        let raraunga = "Sensitive data.";
+        let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
+        assert!(whakamuna.len() > 0); // Ensure encryption was successful
+    }
+
+    #[test]
+    fn test_wetekina_raraunga_aead() {
+        let ki = waihanga_ki().unwrap();
+        let raraunga = "Sensitive data.";
+        let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
+        let wetekina = wetekina_raraunga_aead(&ki, &nonce, &whakamuna);
+        assert!(wetekina.is_ok());
+        let raraunga_wetekina = String::from_utf8(wetekina.unwrap());
+        assert!(raraunga_wetekina.is_ok());
+        let raraunga_wetekina = raraunga_wetekina.unwrap();
+        assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
+    }
+    }    
