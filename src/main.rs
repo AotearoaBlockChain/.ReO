@@ -87,7 +87,10 @@ pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Resu
     let mut in_out = whakamuna.to_vec();
     let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
     match ki_pōwhiri.open_in_place(nonce, Aad::empty(), &mut in_out) {
-        Ok([u8]) => Ok(in_out),
+        Ok(data) => match data {
+            &mut [] => Ok(Vec::new()),
+            &mut [_, _, ..] => Ok(in_out),
+        },
         Err(e) => Err(ReOError::RingError(e)),
     }
 }
@@ -355,4 +358,4 @@ mod tests {
         let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-        }
+    }
