@@ -9,6 +9,14 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
 
+mod network;
+
+#[tokio::main]
+async fn main() {
+    // Call the function to run the HTTP server
+    network::run_server().await;
+}
+
 // Custom error type
 #[derive(Debug)]
 pub enum ReOError {
