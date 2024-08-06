@@ -405,4 +405,4 @@ mod tests {
         let raraunga_wetekina = raraunga_wetekina.unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-    }
+}
