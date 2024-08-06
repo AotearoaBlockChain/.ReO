@@ -74,8 +74,10 @@ pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, V
     let nonce = Nonce::assume_unique_for_key(nonce_pūrua);
     let mut in_out = raraunga.to_vec();
     let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
-    ki_pōwhiri.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out)?;
-    Ok((nonce_pūrua.to_vec(), in_out))
+    match ki_pōwhiri.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out) {
+        Ok(()) => Ok((nonce_pūrua.to_vec(), in_out)),
+        Err(e) => Err(ReOError::RingError(e)),
+    }
 }
 
 // Decrypt data
@@ -84,8 +86,10 @@ pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Resu
     let nonce = Nonce::try_assume_unique_for_key(nonce)?;
     let mut in_out = whakamuna.to_vec();
     let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
-    ki_pōwhiri.open_in_place(nonce, Aad::empty(), &mut in_out)?;
-    Ok(in_out)
+    match ki_pōwhiri.open_in_place(nonce, Aad::empty(), &mut in_out) {
+        Ok(()) => Ok(in_out),
+        Err(e) => Err(ReOError::RingError(e)),
+    }
 }
 
 // Add a file
@@ -196,6 +200,10 @@ fn main() {
 }
 
 #[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[cfg(test)]
 mod tests {
     use super::*;
 
@@ -351,4 +359,4 @@ mod tests {
         let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-            }
+        }
