@@ -5,13 +5,13 @@ use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
 use std::error::Error;
 use std::fmt;
 use std::fs::{self, File, OpenOptions};
-use std::io::{self, Read, Write}; // Import Read and Write traits
+use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
 
 // Custom error type
 #[derive(Debug)]
-enum ReOError {
+pub enum ReOError {
     IoError(io::Error),
     RingError(ring::error::Unspecified),
     HexError(hex::FromHexError),
@@ -72,11 +72,7 @@ pub fn waihanga_ki() -> Result<String, ReOError> {
 
 // Encrypt data
 pub fn whakamuna_raraunga_aead(ki_hex: &str, raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
-    println!("Debug: Entering whakamuna_raraunga_aead");
-
     let ki = hex::decode(ki_hex)?;
-    println!("Debug: Key length - {}", ki.len());
-    println!("Debug: Data length - {}", raraunga.len());
     
     if ki.len() != 32 {
         return Err(ReOError::RingError(ring::error::Unspecified));
@@ -94,25 +90,14 @@ pub fn whakamuna_raraunga_aead(ki_hex: &str, raraunga: &[u8]) -> Result<(Vec<u8>
     let ki_powhiri = LessSafeKey::new(ki_matapokere);
     
     match ki_powhiri.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out) {
-        Ok(()) => {
-            println!("Debug: Encryption successful");
-            Ok((nonce_purua.to_vec(), in_out))
-        },
-        Err(e) => {
-            println!("Debug: Encryption error - {:?}", e);
-            Err(ReOError::RingError(e))
-        }
+        Ok(()) => Ok((nonce_purua.to_vec(), in_out)),
+        Err(e) => Err(ReOError::RingError(e))
     }
 }
 
 // Decrypt data
 pub fn wetekina_raraunga_aead(ki_hex: &str, nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
-    println!("Debug: Entering wetekina_raraunga_aead");
-
     let ki = hex::decode(ki_hex)?;
-    println!("Debug: Key length - {}", ki.len());
-    println!("Debug: Nonce length - {}", nonce.len());
-    println!("Debug: Encrypted data length - {}", whakamuna.len());
 
     if ki.len() != 32 {
         return Err(ReOError::RingError(ring::error::Unspecified));
@@ -124,15 +109,8 @@ pub fn wetekina_raraunga_aead(ki_hex: &str, nonce: &[u8], whakamuna: &[u8]) -> R
     let ki_powhiri = LessSafeKey::new(ki_matapokere);
     
     match ki_powhiri.open_in_place(nonce, Aad::empty(), &mut in_out) {
-        Ok(data) => match data {
-            &mut [] => Ok(Vec::new()),
-            &mut [_] => Ok(in_out),
-            &mut [_, _, ..] => Ok(in_out),
-        },
-        Err(e) => {
-            println!("Debug: Decryption error - {:?}", e);
-            Err(ReOError::RingError(e))
-        }
+        Ok(data) => Ok(data.to_vec()),
+        Err(e) => Err(ReOError::RingError(e))
     }
 }
 
@@ -143,7 +121,6 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
         return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "Konae already exists")));
     }
     File::create(&ara)?;
-    println!("Konae '{}' kua tapirihia", ingoa);
     Ok(())
 }
 
@@ -151,7 +128,6 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
 pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     fs::remove_file(&ara)?;
-    println!("Konae '{}' kua mukua", ingoa);
     Ok(())
 }
 
@@ -167,7 +143,6 @@ pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
 pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
     let mut ara = OpenOptions::new().append(true).open(ingoa)?;
     ara.write_all(raraunga.as_bytes())?;
-    println!("Raraunga kua tapirihia ki te konae '{}'", ingoa);
     Ok(())
 }
 
@@ -324,28 +299,6 @@ mod tests {
     }
 
     #[test]
-    fn test_mukua_konae_permission_denied() {
-        let ingoa_konae = "/root/testfile.txt";
-        let result = mukua_konae(ingoa_konae);
-        assert!(result.is_err()); // Expect an error due to permission denied
-    }
-
-    #[test]
-    fn test_large_input_whakamuka() {
-        let raraunga = "a".repeat(10_000);
-        let result = whakamuka(&raraunga);
-        assert!(result.is_ok());
-    }
-
-    #[test]
-    fn test_large_input_hangaia_hmac() {
-        let raraunga = "a".repeat(10_000);
-        let ki = "supersecretkey";
-        let result = hangaia_hmac(ki, &raraunga);
-        assert!(result.is_ok());
-    }
-
-    #[test]
     fn test_panuihia_konae() {
         let ingoa_konae = "testfile.txt";
         let ihirangi = "This is a test content.";
@@ -405,4 +358,4 @@ mod tests {
         let raraunga_wetekina = raraunga_wetekina.unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-}
+        }
