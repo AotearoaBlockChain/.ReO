@@ -64,35 +64,55 @@ pub fn waihanga_ki() -> Result<String, ReOError> {
 
 // Encrypt data
 pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
-    let ki_matapōkere = UnboundKey::new(&AES_256_GCM, ki)?;
-    let nonce_pūrua = {
+    println!("Debug: Entering whakamuna_raraunga_aead");
+    println!("Debug: Key - {:?}", ki);
+    println!("Debug: Data - {:?}", raraunga);
+
+    let ki_matapokere = UnboundKey::new(&AES_256_GCM, ki)?;
+    let nonce_purua = {
         let rng = SystemRandom::new();
         let mut nonce = [0u8; 12];
         rng.fill(&mut nonce)?;
         nonce
     };
-    let nonce = Nonce::assume_unique_for_key(nonce_pūrua);
+    let nonce = Nonce::assume_unique_for_key(nonce_purua);
     let mut in_out = raraunga.to_vec();
-    let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
-    match ki_pōwhiri.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out) {
-        Ok(()) => Ok((nonce_pūrua.to_vec(), in_out)),
-        Err(e) => Err(ReOError::RingError(e)),
+    let ki_powhiri = LessSafeKey::new(ki_matapokere);
+    
+    match ki_powhiri.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out) {
+        Ok(()) => {
+            println!("Debug: Encryption successful");
+            Ok((nonce_purua.to_vec(), in_out))
+        },
+        Err(e) => {
+            println!("Debug: Encryption error - {:?}", e);
+            Err(ReOError::RingError(e))
+        }
     }
 }
 
 // Decrypt data
 pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
-    let ki_matapōkere = UnboundKey::new(&AES_256_GCM, ki)?;
+    println!("Debug: Entering wetekina_raraunga_aead");
+    println!("Debug: Key - {:?}", ki);
+    println!("Debug: Nonce - {:?}", nonce);
+    println!("Debug: Encrypted data - {:?}", whakamuna);
+
+    let ki_matapokere = UnboundKey::new(&AES_256_GCM, ki)?;
     let nonce = Nonce::try_assume_unique_for_key(nonce)?;
     let mut in_out = whakamuna.to_vec();
-    let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
-    match ki_pōwhiri.open_in_place(nonce, Aad::empty(), &mut in_out) {
+    let ki_powhiri = LessSafeKey::new(ki_matapokere);
+    
+    match ki_powhiri.open_in_place(nonce, Aad::empty(), &mut in_out) {
         Ok(data) => match data {
             &mut [] => Ok(Vec::new()),
             &mut [_] => Ok(in_out),
             &mut [_, _, ..] => Ok(in_out),
         },
-        Err(e) => Err(ReOError::RingError(e)),
+        Err(e) => {
+            println!("Debug: Decryption error - {:?}", e);
+            Err(ReOError::RingError(e))
+        }
     }
 }
 
@@ -100,10 +120,10 @@ pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Resu
 pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     if ara.exists() {
-        return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "Kōnae already exists")));
+        return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "Konae already exists")));
     }
     File::create(&ara)?;
-    println!("Kōnae '{}' kua tapirihia", ingoa);
+    println!("Konae '{}' kua tapirihia", ingoa);
     Ok(())
 }
 
@@ -111,7 +131,7 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
 pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     fs::remove_file(&ara)?;
-    println!("Kōnae '{}' kua mukua", ingoa);
+    println!("Konae '{}' kua mukua", ingoa);
     Ok(())
 }
 
@@ -127,7 +147,7 @@ pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
 pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
     let mut ara = OpenOptions::new().append(true).open(ingoa)?;
     ara.write_all(raraunga.as_bytes())?;
-    println!("Raraunga kua tāpirihia ki te kōnae '{}'", ingoa);
+    println!("Raraunga kua tapirihia ki te konae '{}'", ingoa);
     Ok(())
 }
 
@@ -148,35 +168,35 @@ fn main() {
 
     let ingoa_konae = "tauira.txt";
     match tapirihia_konae(ingoa_konae) {
-        Ok(()) => println!("Kōnae kua tapirihia: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa tapiri kōnae: {}", e),
+        Ok(()) => println!("Konae kua tapirihia: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa tapiri konae: {}", e),
     }
 
     match panuihia_konae(ingoa_konae) {
-        Ok(ihirangi) => println!("Ihirangi o te kōnae: '{}'", ihirangi),
-        Err(e) => eprintln!("Hapa pānui kōnae: {}", e),
+        Ok(ihirangi) => println!("Ihirangi o te konae: '{}'", ihirangi),
+        Err(e) => eprintln!("Hapa panui konae: {}", e),
     }
 
-    match tapirihia_raraunga(ingoa_konae, "\nHe rārangi anō.") {
-        Ok(()) => println!("Raraunga kua tāpirihia ki te kōnae: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa tāpiri raraunga ki te kōnae: {}", e),
+    match tapirihia_raraunga(ingoa_konae, "\nHe rarangi ano.") {
+        Ok(()) => println!("Raraunga kua tapirihia ki te konae: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa tapiri raraunga ki te konae: {}", e),
     }
 
     match mukua_konae(ingoa_konae) {
-        Ok(()) => println!("Kōnae kua mukua: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa muku kōnae: {}", e),
+        Ok(()) => println!("Konae kua mukua: '{}'", ingoa_konae),
+        Err(e) => eprintln!("Hapa muku konae: {}", e),
     }
 
     // Test cryptographic functions
     match waihanga_ki() {
         Ok(ki) => println!("Generated key: {}", ki),
-        Err(e) => eprintln!("Hapa waihanga kī: {}", e),
+        Err(e) => eprintln!("Hapa waihanga ki: {}", e),
     }
 
     let ki = match waihanga_ki() {
         Ok(ki) => ki.into_bytes(),
         Err(e) => {
-            eprintln!("Hapa waihanga kī: {}", e);
+            eprintln!("Hapa waihanga ki: {}", e);
             return;
         }
     };
