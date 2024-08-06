@@ -14,6 +14,7 @@ use hex;
 enum ReOError {
     IoError(io::Error),
     RingError(ring::error::Unspecified),
+    HexError(hex::FromHexError),
 }
 
 impl fmt::Display for ReOError {
@@ -21,6 +22,7 @@ impl fmt::Display for ReOError {
         match *self {
             ReOError::IoError(ref err) => write!(f, "IO error: {}", err),
             ReOError::RingError(ref err) => write!(f, "Ring error: {:?}", err),
+            ReOError::HexError(ref err) => write!(f, "Hex error: {:?}", err),
         }
     }
 }
@@ -36,6 +38,12 @@ impl From<io::Error> for ReOError {
 impl From<ring::error::Unspecified> for ReOError {
     fn from(err: ring::error::Unspecified) -> ReOError {
         ReOError::RingError(err)
+    }
+}
+
+impl From<hex::FromHexError> for ReOError {
+    fn from(err: hex::FromHexError) -> ReOError {
+        ReOError::HexError(err)
     }
 }
 
@@ -63,8 +71,10 @@ pub fn waihanga_ki() -> Result<String, ReOError> {
 }
 
 // Encrypt data
-pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
+pub fn whakamuna_raraunga_aead(ki_hex: &str, raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
     println!("Debug: Entering whakamuna_raraunga_aead");
+
+    let ki = hex::decode(ki_hex)?;
     println!("Debug: Key length - {}", ki.len());
     println!("Debug: Data length - {}", raraunga.len());
     
@@ -72,7 +82,7 @@ pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, V
         return Err(ReOError::RingError(ring::error::Unspecified));
     }
 
-    let ki_matapokere = UnboundKey::new(&AES_256_GCM, ki)?;
+    let ki_matapokere = UnboundKey::new(&AES_256_GCM, &ki)?;
     let nonce_purua = {
         let rng = SystemRandom::new();
         let mut nonce = [0u8; 12];
@@ -96,8 +106,10 @@ pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, V
 }
 
 // Decrypt data
-pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
+pub fn wetekina_raraunga_aead(ki_hex: &str, nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
     println!("Debug: Entering wetekina_raraunga_aead");
+
+    let ki = hex::decode(ki_hex)?;
     println!("Debug: Key length - {}", ki.len());
     println!("Debug: Nonce length - {}", nonce.len());
     println!("Debug: Encrypted data length - {}", whakamuna.len());
@@ -106,7 +118,7 @@ pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Resu
         return Err(ReOError::RingError(ring::error::Unspecified));
     }
 
-    let ki_matapokere = UnboundKey::new(&AES_256_GCM, ki)?;
+    let ki_matapokere = UnboundKey::new(&AES_256_GCM, &ki)?;
     let nonce = Nonce::try_assume_unique_for_key(nonce)?;
     let mut in_out = whakamuna.to_vec();
     let ki_powhiri = LessSafeKey::new(ki_matapokere);
@@ -202,7 +214,7 @@ fn main() {
     }
 
     let ki = match waihanga_ki() {
-        Ok(ki) => ki.into_bytes(),
+        Ok(ki) => ki,
         Err(e) => {
             eprintln!("Hapa waihanga ki: {}", e);
             return;
@@ -373,7 +385,7 @@ mod tests {
     fn test_whakamuna_raraunga_aead() {
         let ki = waihanga_ki().unwrap();
         let raraunga = "Sensitive data.";
-        let (nonce, whakamuna) = whakamuna_raraunga_aead(&hex::decode(&ki).unwrap(), raraunga.as_bytes()).unwrap();
+        let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
         assert!(whakamuna.len() > 0); // Ensure encryption was successful
     }
 
@@ -381,10 +393,10 @@ mod tests {
     fn test_wetekina_raraunga_aead() {
         let ki = waihanga_ki().unwrap();
         let raraunga = "Sensitive data.";
-        let (nonce, whakamuna) = whakamuna_raraunga_aead(&hex::decode(&ki).unwrap(), raraunga.as_bytes()).unwrap();
-        let wetekina = wetekina_raraunga_aead(&hex::decode(&ki).unwrap(), &nonce, &whakamuna);
+        let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
+        let wetekina = wetekina_raraunga_aead(&ki, &nonce, &whakamuna);
         assert!(wetekina.is_ok());
         let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-    }
+                }
