@@ -237,7 +237,7 @@ fn main() {
         }
     };
 
-    match String::from_utf8(decrypted) {
+    match String::from_utf8(decrypted.clone()) {
         Ok(decrypted_str) => println!("Decrypted data: {}", decrypted_str),
         Err(_) => {
             // Handle invalid UTF-8 sequences
@@ -405,5 +405,4 @@ mod tests {
         let raraunga_wetekina = raraunga_wetekina.unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-}
-        
+    }
