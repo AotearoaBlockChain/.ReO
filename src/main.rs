@@ -87,7 +87,7 @@ pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Resu
     let mut in_out = whakamuna.to_vec();
     let ki_pōwhiri = LessSafeKey::new(ki_matapōkere);
     match ki_pōwhiri.open_in_place(nonce, Aad::empty(), &mut in_out) {
-        Ok(()) => Ok(in_out),
+        Ok([u8]) => Ok(in_out),
         Err(e) => Err(ReOError::RingError(e)),
     }
 }
