@@ -239,7 +239,11 @@ fn main() {
 
     match String::from_utf8(decrypted) {
         Ok(decrypted_str) => println!("Decrypted data: {}", decrypted_str),
-        Err(e) => eprintln!("Hapa wetekina raraunga: {}", e),
+        Err(_) => {
+            // Handle invalid UTF-8 sequences
+            println!("Decrypted data contains invalid UTF-8 sequences, displaying raw bytes:");
+            println!("{:?}", decrypted);
+        }
     }
 }
 
@@ -396,7 +400,10 @@ mod tests {
         let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
         let wetekina = wetekina_raraunga_aead(&ki, &nonce, &whakamuna);
         assert!(wetekina.is_ok());
-        let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
+        let raraunga_wetekina = String::from_utf8(wetekina.unwrap());
+        assert!(raraunga_wetekina.is_ok());
+        let raraunga_wetekina = raraunga_wetekina.unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-                }
+}
+        
