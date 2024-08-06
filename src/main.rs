@@ -203,10 +203,6 @@ fn main() {
 mod tests {
     use super::*;
 
-    #[cfg(test)]
-mod tests {
-    use super::*;
-
     #[test]
     fn test_whakamuna_raraunga() {
         let raraunga = "Hello, world!";
