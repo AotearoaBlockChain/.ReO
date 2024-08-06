@@ -40,11 +40,11 @@ impl From<ring::error::Unspecified> for ReOError {
 }
 
 // Hash data
-pub fn whakamuna_raraunga(raraunga: &str) -> Result<String, ReOError> {
+pub fn whakamuka(raraunga: &str) -> Result<String, ReOError> {
     let mut horopaki = Context::new(&SHA256);
     horopaki.update(raraunga.as_bytes());
-    let whakamuna = horopaki.finish();
-    Ok(hex::encode(whakamuna.as_ref()))
+    let whakamuka = horopaki.finish();
+    Ok(hex::encode(whakamuka.as_ref()))
 }
 
 // Create HMAC
@@ -65,8 +65,12 @@ pub fn waihanga_ki() -> Result<String, ReOError> {
 // Encrypt data
 pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
     println!("Debug: Entering whakamuna_raraunga_aead");
-    println!("Debug: Key - {:?}", ki);
-    println!("Debug: Data - {:?}", raraunga);
+    println!("Debug: Key length - {}", ki.len());
+    println!("Debug: Data length - {}", raraunga.len());
+    
+    if ki.len() != 32 {
+        return Err(ReOError::RingError(ring::error::Unspecified));
+    }
 
     let ki_matapokere = UnboundKey::new(&AES_256_GCM, ki)?;
     let nonce_purua = {
@@ -94,9 +98,13 @@ pub fn whakamuna_raraunga_aead(ki: &[u8], raraunga: &[u8]) -> Result<(Vec<u8>, V
 // Decrypt data
 pub fn wetekina_raraunga_aead(ki: &[u8], nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
     println!("Debug: Entering wetekina_raraunga_aead");
-    println!("Debug: Key - {:?}", ki);
-    println!("Debug: Nonce - {:?}", nonce);
-    println!("Debug: Encrypted data - {:?}", whakamuna);
+    println!("Debug: Key length - {}", ki.len());
+    println!("Debug: Nonce length - {}", nonce.len());
+    println!("Debug: Encrypted data length - {}", whakamuna.len());
+
+    if ki.len() != 32 {
+        return Err(ReOError::RingError(ring::error::Unspecified));
+    }
 
     let ki_matapokere = UnboundKey::new(&AES_256_GCM, ki)?;
     let nonce = Nonce::try_assume_unique_for_key(nonce)?;
@@ -155,9 +163,9 @@ pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
 fn main() {
     // Example usage of the functions
     let raraunga = "Hello, world!";
-    match whakamuna_raraunga(raraunga) {
-        Ok(hash) => println!("Whakamuna: {}", hash),
-        Err(e) => eprintln!("Hapa whakamuna raraunga: {}", e),
+    match whakamuka(raraunga) {
+        Ok(hash) => println!("Whakamuka: {}", hash),
+        Err(e) => eprintln!("Hapa whakamuka raraunga: {}", e),
     }
 
     let ki = "supersecretkey";
@@ -228,18 +236,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_whakamuna_raraunga() {
+    fn test_whakamuka() {
         let raraunga = "Hello, world!";
-        let result = whakamuna_raraunga(raraunga);
+        let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
         assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3"); // Expected hash for "Hello, world!"
     }
 
     #[test]
-    fn test_whakamuna_raraunga_empty() {
+    fn test_whakamuka_empty() {
         let raraunga = "";
-        let result = whakamuna_raraunga(raraunga);
+        let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
         assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); // Expected hash for empty string
@@ -307,9 +315,9 @@ mod tests {
     }
 
     #[test]
-    fn test_large_input_whakamuna() {
+    fn test_large_input_whakamuka() {
         let raraunga = "a".repeat(10_000);
-        let result = whakamuna_raraunga(&raraunga);
+        let result = whakamuka(&raraunga);
         assert!(result.is_ok());
     }
 
@@ -379,4 +387,4 @@ mod tests {
         let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-            }
+    }
