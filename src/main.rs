@@ -237,12 +237,15 @@ fn main() {
         }
     };
 
-    match String::from_utf8(decrypted.clone()) {
+    // To properly handle padding, we should trim any trailing null bytes (if present)
+    let decrypted_trimmed = decrypted.iter().cloned().take_while(|&x| x != 0).collect::<Vec<_>>();
+
+    match String::from_utf8(decrypted_trimmed.clone()) {
         Ok(decrypted_str) => println!("Decrypted data: {}", decrypted_str),
         Err(_) => {
             // Handle invalid UTF-8 sequences
             println!("Decrypted data contains invalid UTF-8 sequences, displaying raw bytes:");
-            println!("{:?}", decrypted);
+            println!("{:?}", decrypted_trimmed);
         }
     }
 }
