@@ -12,6 +12,7 @@ use std::path::Path;
 use hex;
 use std::thread;
 use std::time::Duration;
+use uuid::Uuid;
 
 mod network;
 
@@ -236,15 +237,22 @@ mod tests {
 
     #[test]
 fn test_panuihia_konae() {
-    let ingoa_konae = "testfile.txt";
+    // Generate a unique file name
+    let unique_file_name = format!("testfile_{}.txt", Uuid::new_v4());
+    let ingoa_konae = unique_file_name.as_str();
     let ihirangi = "This is a test content.";
 
-    // Ensure previous file is removed
-    let _ = fs::remove_file(ingoa_konae);
+    // Ensure previous file (if any) is removed
+    if Path::new(ingoa_konae).exists() {
+        let _ = fs::remove_file(ingoa_konae);
+    }
 
     // Write content to the file
     let write_result = fs::write(ingoa_konae, ihirangi);
-    assert!(write_result.is_ok(), "Failed to write to test file");
+    assert!(write_result.is_ok(), "Failed to write to test file: {:?}", write_result);
+
+    // Wait a bit to ensure file system operations complete
+    thread::sleep(Duration::from_millis(10));
 
     // Ensure file write has been successful before reading it
     let result = panuihia_konae(ingoa_konae);
@@ -254,7 +262,7 @@ fn test_panuihia_konae() {
 
     // Clean up
     let cleanup_result = fs::remove_file(ingoa_konae);
-    assert!(cleanup_result.is_ok(), "Failed to clean up test file");
+    assert!(cleanup_result.is_ok(), "Failed to clean up test file: {:?}", cleanup_result);
 }
 
     #[test]
