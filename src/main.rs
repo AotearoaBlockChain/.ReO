@@ -1,5 +1,3 @@
-// src/main.rs
-
 use ring::digest::{Context, SHA256};
 use ring::hmac;
 use ring::rand::{SecureRandom, SystemRandom};
@@ -9,16 +7,14 @@ use std::fmt;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
-use hex;
-use std::thread;
-use std::time::Duration;
 use uuid::Uuid;
+use hex;
 
 mod network;
 
 #[tokio::main]
 async fn main() {
-    // Whakahaerea te tūmau HTTP
+    // Call the function to run the HTTP server
     network::run_server().await;
 }
 
@@ -162,6 +158,8 @@ pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::thread;
+    use std::time::Duration;
 
     #[test]
     fn test_whakamuka() {
@@ -213,6 +211,7 @@ mod tests {
     #[test]
     fn test_tapirihia_konae_existing_file() {
         let ingoa_konae = "testfile.txt";
+        let ingoa_konae = "testfile.txt";
         let _ = File::create(ingoa_konae);
         let result = tapirihia_konae(ingoa_konae);
         assert!(result.is_err()); // Expect an error because the file already exists
@@ -236,34 +235,33 @@ mod tests {
     }
 
     #[test]
-fn test_panuihia_konae() {
-    // Generate a unique file name
-    let unique_file_name = format!("testfile_{}.txt", Uuid::new_v4());
-    let ingoa_konae = unique_file_name.as_str();
-    let ihirangi = "This is a test content.";
+    fn test_panuihia_konae() {
+        let unique_file_name = format!("testfile_{}.txt", Uuid::new_v4());
+        let ingoa_konae = unique_file_name.as_str();
+        let ihirangi = "This is a test content.";
 
-    // Ensure previous file (if any) is removed
-    if Path::new(ingoa_konae).exists() {
-        let _ = fs::remove_file(ingoa_konae);
+        // Ensure previous file (if any) is removed
+        if Path::new(ingoa_konae).exists() {
+            let _ = fs::remove_file(ingoa_konae);
+        }
+
+        // Write content to the file
+        let write_result = fs::write(ingoa_konae, ihirangi);
+        assert!(write_result.is_ok(), "Failed to write to test file: {:?}", write_result);
+
+        // Wait a bit to ensure file system operations complete
+        thread::sleep(Duration::from_millis(10));
+
+        // Ensure file write has been successful before reading it
+        let result = panuihia_konae(ingoa_konae);
+        assert!(result.is_ok(), "Failed to read the file: {:?}", result);
+        let ihirangi_konae = result.unwrap();
+        assert_eq!(ihirangi_konae, ihirangi, "File content does not match expected content");
+
+        // Clean up
+        let cleanup_result = fs::remove_file(ingoa_konae);
+        assert!(cleanup_result.is_ok(), "Failed to clean up test file: {:?}", cleanup_result);
     }
-
-    // Write content to the file
-    let write_result = fs::write(ingoa_konae, ihirangi);
-    assert!(write_result.is_ok(), "Failed to write to test file: {:?}", write_result);
-
-    // Wait a bit to ensure file system operations complete
-    thread::sleep(Duration::from_millis(10));
-
-    // Ensure file write has been successful before reading it
-    let result = panuihia_konae(ingoa_konae);
-    assert!(result.is_ok(), "Failed to read the file: {:?}", result);
-    let ihirangi_konae = result.unwrap();
-    assert_eq!(ihirangi_konae, ihirangi, "File content does not match expected content");
-
-    // Clean up
-    let cleanup_result = fs::remove_file(ingoa_konae);
-    assert!(cleanup_result.is_ok(), "Failed to clean up test file: {:?}", cleanup_result);
-}
 
     #[test]
     fn test_panuihia_konae_nonexistent() {
@@ -274,15 +272,24 @@ fn test_panuihia_konae() {
 
     #[test]
     fn test_tapirihia_raraunga() {
-        let ingoa_konae = "testfile.txt";
+        let unique_file_name = format!("testfile_{}.txt", Uuid::new_v4());
+        let ingoa_konae = unique_file_name.as_str();
         let ihirangi_tuakiri = "Initial content.";
         let ihirangi_tapiri = " Appended content.";
-        let _ = fs::write(ingoa_konae, ihirangi_tuakiri); // Write initial content to the file
+
+        // Write initial content to the file
+        let _ = fs::write(ingoa_konae, ihirangi_tuakiri);
+
+        // Append content to the file
         let result = tapirihia_raraunga(ingoa_konae, ihirangi_tapiri);
-        assert!(result.is_ok());
+        assert!(result.is_ok(), "Failed to append data to file: {:?}", result);
+
+        // Read the file to check content
         let ihirangi_konae = fs::read_to_string(ingoa_konae).unwrap();
-        assert_eq!(ihirangi_konae, format!("{}{}", ihirangi_tuakiri, ihirangi_tapiri)); // Expected content to be concatenated
-        let _ = fs::remove_file(ingoa_konae); // Clean up
+        assert_eq!(ihirangi_konae, format!("{}{}", ihirangi_tuakiri, ihirangi_tapiri), "File content does not match expected appended content");
+
+        // Clean up
+        let _ = fs::remove_file(ingoa_konae);
     }
 
     #[test]
@@ -307,10 +314,10 @@ fn test_panuihia_konae() {
         let raraunga = "Sensitive data.";
         let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
         let wetekina = wetekina_raraunga_aead(&ki, &nonce, &whakamuna);
-        assert!(wetekina.is_ok());
+        assert!(wetekina.is_ok(), "Decryption failed: {:?}", wetekina);
         let raraunga_wetekina = String::from_utf8(wetekina.unwrap());
-        assert!(raraunga_wetekina.is_ok());
+        assert!(raraunga_wetekina.is_ok(), "Failed to convert decrypted data to string");
         let raraunga_wetekina = raraunga_wetekina.unwrap();
-        assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
+        assert_eq!(raraunga_wetekina, raraunga, "Decrypted data does not match original data");
     }
-}
+            }
