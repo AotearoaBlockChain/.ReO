@@ -210,8 +210,7 @@ mod tests {
 
     #[test]
     fn test_tapirihia_konae_existing_file() {
-        let ingoa_konae = "testfile.txt";
-        let ingoa_konae = "testfile.txt";
+        let _ingoa_konae = "testfile.txt";
         let _ = File::create(ingoa_konae);
         let result = tapirihia_konae(ingoa_konae);
         assert!(result.is_err()); // Expect an error because the file already exists
@@ -304,7 +303,7 @@ mod tests {
     fn test_whakamuna_raraunga_aead() {
         let ki = waihanga_ki().unwrap();
         let raraunga = "Sensitive data.";
-        let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
+        let (_nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
         assert!(whakamuna.len() > 0); // Ensure encryption was successful
     }
 
