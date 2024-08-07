@@ -154,82 +154,6 @@ pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
     Ok(())
 }
 
-// Main function
-fn main() {
-    // Example usage of the functions
-    let raraunga = "Hello, world!";
-    match whakamuka(raraunga) {
-        Ok(hash) => println!("Whakamuka: {}", hash),
-        Err(e) => eprintln!("Hapa whakamuka raraunga: {}", e),
-    }
-
-    let ki = "supersecretkey";
-    match hangaia_hmac(ki, raraunga) {
-        Ok(hmac) => println!("HMAC: {}", hmac),
-        Err(e) => eprintln!("Hapa hanga HMAC: {}", e),
-    }
-
-    let ingoa_konae = "tauira.txt";
-    match tapirihia_konae(ingoa_konae) {
-        Ok(()) => println!("Konae kua tapirihia: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa tapiri konae: {}", e),
-    }
-
-    match panuihia_konae(ingoa_konae) {
-        Ok(ihirangi) => println!("Ihirangi o te konae: '{}'", ihirangi),
-        Err(e) => eprintln!("Hapa panui konae: {}", e),
-    }
-
-    match tapirihia_raraunga(ingoa_konae, "\nHe rarangi ano.") {
-        Ok(()) => println!("Raraunga kua tapirihia ki te konae: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa tapiri raraunga ki te konae: {}", e),
-    }
-
-    match mukua_konae(ingoa_konae) {
-        Ok(()) => println!("Konae kua mukua: '{}'", ingoa_konae),
-        Err(e) => eprintln!("Hapa muku konae: {}", e),
-    }
-
-    // Test cryptographic functions
-    match waihanga_ki() {
-        Ok(ki) => println!("Generated key: {}", ki),
-        Err(e) => eprintln!("Hapa waihanga ki: {}", e),
-    }
-
-    let ki = match waihanga_ki() {
-        Ok(ki) => ki,
-        Err(e) => {
-            eprintln!("Hapa waihanga ki: {}", e);
-            return;
-        }
-    };
-
-    let (nonce, encrypted) = match whakamuna_raraunga_aead(&ki, raraunga.as_bytes()) {
-        Ok((nonce, encrypted)) => (nonce, encrypted),
-        Err(e) => {
-            eprintln!("Hapa whakamuna raraunga: {}", e);
-            return;
-        }
-    };
-
-    let decrypted = match wetekina_raraunga_aead(&ki, &nonce, &encrypted) {
-        Ok(decrypted) => decrypted,
-        Err(e) => {
-            eprintln!("Hapa wetekina raraunga: {}", e);
-            return;
-        }
-    };
-
-    match String::from_utf8(decrypted.clone()) {
-        Ok(decrypted_str) => println!("Decrypted data: {}", decrypted_str),
-        Err(_) => {
-            // Handle invalid UTF-8 sequences
-            println!("Decrypted data contains invalid UTF-8 sequences, displaying raw bytes:");
-            println!("{:?}", decrypted);
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -366,4 +290,4 @@ mod tests {
         let raraunga_wetekina = raraunga_wetekina.unwrap();
         assert_eq!(raraunga_wetekina, raraunga); // Expected decrypted data to match original data
     }
-        }
+}
