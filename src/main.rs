@@ -159,6 +159,7 @@ mod tests {
     use super::*;
     use std::thread;
     use std::time::Duration;
+    use uuid::Uuid;
 
     #[test]
     fn test_whakamuka() {
