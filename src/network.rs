@@ -6,33 +6,28 @@ use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
 use hex;
 use serde::{Deserialize, Serialize};
 
-// Raraunga whirihora
 #[derive(Debug, Deserialize)]
 struct UrungaRaraunga {
     raraunga: String,
 }
 
-// HMAC whirihora
 #[derive(Debug, Deserialize)]
 struct UrungaHmac {
     ki: String,
     raraunga: String,
 }
 
-// Tauhohe API
 #[derive(Debug, Serialize)]
 struct TauhoheApi<T> {
     hua: T,
 }
 
-// Whakamuna raraunga whirihora
 #[derive(Debug, Deserialize)]
 struct UrungaWhakamuna {
     ki: String,
     raraunga: String,
 }
 
-// Wetekina raraunga whirihora
 #[derive(Debug, Deserialize)]
 struct UrungaWetekina {
     ki: String,
@@ -40,9 +35,7 @@ struct UrungaWetekina {
     whakamuna: String,
 }
 
-// Whakaritea te tūmau
 pub async fn whakahaere_tumau() {
-    // Aratuka whakamuka
     let aratuka_whakamuka = warp::path!("whakamuka")
         .and(warp::post())
         .and(warp::body::json())
@@ -53,7 +46,6 @@ pub async fn whakahaere_tumau() {
             warp::reply::json(&TauhoheApi { hua: hex::encode(whakamuka.as_ref()) })
         });
 
-    // Aratuka HMAC
     let aratuka_hmac = warp::path!("hmac")
         .and(warp::post())
         .and(warp::body::json())
@@ -63,7 +55,6 @@ pub async fn whakahaere_tumau() {
             warp::reply::json(&TauhoheApi { hua: hex::encode(waitohu.as_ref()) })
         });
 
-    // Aratuka hanga ki
     let aratuka_hanga_ki = warp::path!("ki")
         .and(warp::post())
         .map(|| {
@@ -73,7 +64,6 @@ pub async fn whakahaere_tumau() {
             warp::reply::json(&TauhoheApi { hua: hex::encode(ki) })
         });
 
-    // Aratuka whakamuna
     let aratuka_whakamuna = warp::path!("whakamuna")
         .and(warp::post())
         .and(warp::body::json())
@@ -101,7 +91,6 @@ pub async fn whakahaere_tumau() {
             })
         });
 
-    // Aratuka wetekina
     let aratuka_wetekina = warp::path!("wetekina")
         .and(warp::post())
         .and(warp::body::json())
@@ -126,4 +115,4 @@ pub async fn whakahaere_tumau() {
     let aratuka = aratuka_whakamuka.or(aratuka_hmac).or(aratuka_hanga_ki).or(aratuka_whakamuna).or(aratuka_wetekina);
 
     warp::serve(aratuka).run(([127, 0, 0, 1], 3030)).await;
-                               }
+}
