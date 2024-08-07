@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+uuid = { version = "1.0", features = ["v4"] }
 warp = "0.3"
 tokio = { version = "1", features = ["full"] }
 ring = "0.16.20"
