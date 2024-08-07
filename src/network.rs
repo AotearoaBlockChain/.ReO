@@ -6,113 +6,124 @@ use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
 use hex;
 use serde::{Deserialize, Serialize};
 
+// Raraunga whirihora
 #[derive(Debug, Deserialize)]
-struct DataInput {
-    data: String,
+struct UrungaRaraunga {
+    raraunga: String,
 }
 
+// HMAC whirihora
 #[derive(Debug, Deserialize)]
-struct HmacInput {
-    key: String,
-    data: String,
+struct UrungaHmac {
+    ki: String,
+    raraunga: String,
 }
 
+// Tauhohe API
 #[derive(Debug, Serialize)]
-struct ApiResponse<T> {
-    result: T,
+struct TauhoheApi<T> {
+    hua: T,
 }
 
+// Whakamuna raraunga whirihora
 #[derive(Debug, Deserialize)]
-struct EncryptInput {
-    key: String,
-    data: String,
+struct UrungaWhakamuna {
+    ki: String,
+    raraunga: String,
 }
 
+// Wetekina raraunga whirihora
 #[derive(Debug, Deserialize)]
-struct DecryptInput {
-    key: String,
+struct UrungaWetekina {
+    ki: String,
     nonce: String,
-    encrypted: String,
+    whakamuna: String,
 }
 
-pub async fn run_server() {
-    let hash_route = warp::path!("hash")
+// Whakaritea te tūmau
+pub async fn whakahaere_tumau() {
+    // Aratuka whakamuka
+    let aratuka_whakamuka = warp::path!("whakamuka")
         .and(warp::post())
         .and(warp::body::json())
-        .map(|input: DataInput| {
-            let mut context = Context::new(&SHA256);
-            context.update(input.data.as_bytes());
-            let hash = context.finish();
-            warp::reply::json(&ApiResponse { result: hex::encode(hash.as_ref()) })
+        .map(|urunga: UrungaRaraunga| {
+            let mut horopaki = Context::new(&SHA256);
+            horopaki.update(urunga.raraunga.as_bytes());
+            let whakamuka = horopaki.finish();
+            warp::reply::json(&TauhoheApi { hua: hex::encode(whakamuka.as_ref()) })
         });
 
-    let hmac_route = warp::path!("hmac")
+    // Aratuka HMAC
+    let aratuka_hmac = warp::path!("hmac")
         .and(warp::post())
         .and(warp::body::json())
-        .map(|input: HmacInput| {
-            let key = hmac::Key::new(hmac::HMAC_SHA256, input.key.as_bytes());
-            let signature = hmac::sign(&key, input.data.as_bytes());
-            warp::reply::json(&ApiResponse { result: hex::encode(signature.as_ref()) })
+        .map(|urunga: UrungaHmac| {
+            let ki = hmac::Key::new(hmac::HMAC_SHA256, urunga.ki.as_bytes());
+            let waitohu = hmac::sign(&ki, urunga.raraunga.as_bytes());
+            warp::reply::json(&TauhoheApi { hua: hex::encode(waitohu.as_ref()) })
         });
 
-    let key_route = warp::path!("key")
+    // Aratuka hanga ki
+    let aratuka_hanga_ki = warp::path!("ki")
         .and(warp::post())
         .map(|| {
             let rng = SystemRandom::new();
-            let mut key = [0u8; 32];
-            rng.fill(&mut key).unwrap();
-            warp::reply::json(&ApiResponse { result: hex::encode(key) })
+            let mut ki = [0u8; 32];
+            rng.fill(&mut ki).unwrap();
+            warp::reply::json(&TauhoheApi { hua: hex::encode(ki) })
         });
 
-    let encrypt_route = warp::path!("encrypt")
+    // Aratuka whakamuna
+    let aratuka_whakamuna = warp::path!("whakamuna")
         .and(warp::post())
         .and(warp::body::json())
-        .map(|input: EncryptInput| {
-            let key = hex::decode(input.key).unwrap();
-            let data = input.data.as_bytes();
+        .map(|urunga: UrungaWhakamuna| {
+            let ki = hex::decode(urunga.ki).unwrap();
+            let raraunga = urunga.raraunga.as_bytes();
             let mut rng = SystemRandom::new();
             let mut nonce = [0u8; 12];
             rng.fill(&mut nonce).unwrap();
 
-            let unbound_key = UnboundKey::new(&AES_256_GCM, &key).unwrap();
+            let unbound_key = UnboundKey::new(&AES_256_GCM, &ki).unwrap();
             let less_safe_key = LessSafeKey::new(unbound_key);
             let nonce = Nonce::assume_unique_for_key(nonce);
-            let mut in_out = data.to_vec();
+            let mut in_out = raraunga.to_vec();
             less_safe_key
                 .seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out)
                 .unwrap();
 
-            warp::reply::json(&ApiResponse {
-                result: format!(
-                    "{{\"nonce\": \"{}\", \"encrypted\": \"{}\"}}",
+            warp::reply::json(&TauhoheApi {
+                hua: format!(
+                    "{{\"nonce\": \"{}\", \"whakamuna\": \"{}\"}}",
                     hex::encode(nonce.as_ref()),
                     hex::encode(&in_out)
                 ),
             })
         });
 
-    let decrypt_route = warp::path!("decrypt")
+    // Aratuka wetekina
+    let aratuka_wetekina = warp::path!("wetekina")
         .and(warp::post())
         .and(warp::body::json())
-        .map(|input: DecryptInput| {
-            let key = hex::decode(input.key).unwrap();
-            let nonce = hex::decode(input.nonce).unwrap();
-            let encrypted = hex::decode(input.encrypted).unwrap();
+        .map(|urunga: UrungaWetekina| {
+            let ki = hex::decode(urunga.ki).unwrap();
+            let nonce = hex::decode(urunga.nonce).unwrap();
+            let whakamuna = hex::decode(urunga.whakamuna).unwrap();
 
-            let unbound_key = UnboundKey::new(&AES_256_GCM, &key).unwrap();
+            let unbound_key = UnboundKey::new(&AES_256_GCM, &ki).unwrap();
             let less_safe_key = LessSafeKey::new(unbound_key);
             let nonce = Nonce::try_assume_unique_for_key(&nonce).unwrap();
-            let mut in_out = encrypted.to_vec();
-            let decrypted_data = less_safe_key
+            let mut in_out = whakamuna.to_vec();
+            let raraunga_wetekina = less_safe_key
                 .open_in_place(nonce, Aad::empty(), &mut in_out)
                 .unwrap();
 
-            warp::reply::json(&ApiResponse {
-                result: String::from_utf8(decrypted_data.to_vec()).unwrap(),
+            warp::reply::json(&TauhoheApi {
+                hua: String::from_utf8(raraunga_wetekina.to_vec()).unwrap(),
             })
         });
 
-    let routes = hash_route.or(hmac_route).or(key_route).or(encrypt_route).or(decrypt_route);
+    let aratuka = aratuka_whakamuka.or(aratuka_hmac).or(aratuka_hanga_ki).or(aratuka_whakamuna).or(aratuka_wetekina);
 
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
-             }
+    warp::serve(aratuka).run(([127, 0, 0, 1], 3030)).await;
+                               }
