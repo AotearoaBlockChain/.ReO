@@ -16,7 +16,7 @@ mod network;
 #[tokio::main]
 async fn main() {
     // Whakahaerea te tūmau HTTP
-    network::whakahaere_tumau().await;
+    network::run_server().await;
 }
 
 // Custom error type
