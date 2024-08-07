@@ -233,15 +233,21 @@ mod tests {
     }
 
     #[test]
-    fn test_panuihia_konae() {
-        let ingoa_konae = "testfile.txt";
-        let ihirangi = "This is a test content.";
-        let _ = fs::write(ingoa_konae, ihirangi); // Write content to the file
-        let result = panuihia_konae(ingoa_konae);
-        assert!(result.is_ok());
-        let ihirangi_konae = result.unwrap();
-        assert_eq!(ihirangi_konae, ihirangi); // Expected content to match the written content
-        let _ = fs::remove_file(ingoa_konae); // Clean up
+fn test_panuihia_konae() {
+    let ingoa_konae = "testfile.txt";
+    let ihirangi = "This is a test content.";
+    // Write content to the file
+    let write_result = fs::write(ingoa_konae, ihirangi);
+    assert!(write_result.is_ok(), "Failed to write to test file");
+
+    // Ensure file write has been successful before reading it
+    let result = panuihia_konae(ingoa_konae);
+    assert!(result.is_ok(), "Failed to read the file");
+    let ihirangi_konae = result.unwrap();
+    assert_eq!(ihirangi_konae, ihirangi, "File content does not match expected content");
+
+    // Clean up
+    let _ = fs::remove_file(ingoa_konae);
     }
 
     #[test]
