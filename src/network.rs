@@ -2,7 +2,6 @@
 
 use warp::Filter;
 use serde::{Deserialize, Serialize};
-use std::convert::Infallible;
 
 #[tokio::main]
 async fn main() {

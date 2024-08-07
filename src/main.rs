@@ -7,7 +7,6 @@ use std::fmt;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
-use uuid::Uuid;
 use hex;
 
 mod network;
