@@ -1,7 +1,7 @@
 // src/network.rs
 
-use serde::{Deserialize, Serialize};
 use warp::Filter;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TauhoheApi {
@@ -30,8 +30,7 @@ struct UrungaWetekina {
     // fields
 }
 
-#[tokio::main]
-async fn main() {
+pub async fn run_server() {
     let aratuka_whakamuka = warp::path("whakamuka")
         .and(warp::body::json())
         .map(|body: UrungaRaraunga| {
