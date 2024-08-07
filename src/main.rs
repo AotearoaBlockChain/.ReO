@@ -236,19 +236,24 @@ mod tests {
 fn test_panuihia_konae() {
     let ingoa_konae = "testfile.txt";
     let ihirangi = "This is a test content.";
+
+    // Ensure previous file is removed
+    let _ = fs::remove_file(ingoa_konae);
+
     // Write content to the file
     let write_result = fs::write(ingoa_konae, ihirangi);
     assert!(write_result.is_ok(), "Failed to write to test file");
 
     // Ensure file write has been successful before reading it
     let result = panuihia_konae(ingoa_konae);
-    assert!(result.is_ok(), "Failed to read the file");
+    assert!(result.is_ok(), "Failed to read the file: {:?}", result);
     let ihirangi_konae = result.unwrap();
     assert_eq!(ihirangi_konae, ihirangi, "File content does not match expected content");
 
     // Clean up
-    let _ = fs::remove_file(ingoa_konae);
-    }
+    let cleanup_result = fs::remove_file(ingoa_konae);
+    assert!(cleanup_result.is_ok(), "Failed to clean up test file");
+}
 
     #[test]
     fn test_panuihia_konae_nonexistent() {
