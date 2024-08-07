@@ -1,3 +1,5 @@
+// src/main.rs
+
 use ring::digest::{Context, SHA256};
 use ring::hmac;
 use ring::rand::{SecureRandom, SystemRandom};
