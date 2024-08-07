@@ -2,6 +2,28 @@
 
 use warp::Filter;
 use serde::{Deserialize, Serialize};
+use std::convert::Infallible;
+
+#[tokio::main]
+async fn main() {
+    // Initialize logging
+    env_logger::init();
+
+    // Define a simple route
+    let hello = warp::path::end()
+        .map(|| {
+            log::info!("Handling request at root path");
+            warp::reply::html("Hello, World!")
+        });
+
+    // Log the server start
+    log::info!("Starting the server at http://127.0.0.1:3030");
+
+    // Start the server
+    warp::serve(hello)
+        .run(([127, 0, 0, 1], 3030))
+        .await;
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TauhoheApi {
