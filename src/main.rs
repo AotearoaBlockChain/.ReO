@@ -12,7 +12,7 @@ use warp::filter
     
 mod network;
 
-#[#[tokio::main]
+#[tokio::main]
 async fn main() {
     // GET /hello => 200 OK with body "Hello, World!"
     let hello = warp::path("hello")
@@ -29,6 +29,40 @@ async fn main() {
     warp::serve(routes)
         .run(([127, 0, 0, 1], 8080))
         .await;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use warp::test::request;
+
+    #[tokio::test]
+    async fn test_hello() {
+        let api = warp::path("hello")
+            .map(|| "Hello, World!");
+
+        let res = request()
+            .method("GET")
+            .path("/hello")
+            .reply(&api)
+            .await;
+
+        assert_eq!(res.body(), "Hello, World!");
+    }
+
+    #[tokio::test]
+    async fn test_root() {
+        let api = warp::path::end()
+            .map(|| "Warp server is running!");
+
+        let res = request()
+            .method("GET")
+            .path("/")
+            .reply(&api)
+            .await;
+
+        assert_eq!(res.body(), "Warp server is running!");
+    }
 }
 
 #[derive(Debug)]
