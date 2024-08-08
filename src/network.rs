@@ -16,11 +16,11 @@ async fn main() {
         });
 
     // Log the server start
-    log::info!("Starting the server at http://127.0.0.1:3030");
+    log::info!("Starting the server at http://127.0.0.1:8080");
 
     // Start the server
     warp::serve(hello)
-        .run(([127, 0, 0, 1], 3030))
+        .run(([127, 0, 0, 1], 8080))
         .await;
 }
 
@@ -89,5 +89,5 @@ pub async fn run_server() {
         .or(aratuka_hanga_ki)
         .or(aratuka_whakamuna);
 
-    warp::serve(aratuka).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(aratuka).run(([127, 0, 0, 1], 8080)).await;
 }
