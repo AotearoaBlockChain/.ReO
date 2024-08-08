@@ -11,11 +11,24 @@ use hex;
 
 mod network;
 
-#[tokio::main]
+#[#[tokio::main]
 async fn main() {
-    network::run_server().await;
-}
+    // GET /hello => 200 OK with body "Hello, World!"
+    let hello = warp::path("hello")
+        .map(|| "Hello, World!");
 
+    // GET / => 200 OK with body "Warp server is running!"
+    let root = warp::path::end()
+        .map(|| "Warp server is running!");
+
+    // Combine the routes
+    let routes = hello.or(root);
+
+    // Start the server on port 8080
+    warp::serve(routes)
+        .run(([127, 0, 0, 1], 8080))
+        .await;
+}
 #[derive(Debug)]
 pub enum ReOError {
     IoError(io::Error),
