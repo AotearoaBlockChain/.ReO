@@ -8,7 +8,7 @@ use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
-use warp::filter
+use warp::filter;
     
 mod network;
 
