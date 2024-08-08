@@ -7,7 +7,6 @@ use std::fmt;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
-use uuid::Uuid;
 use hex;
 
 mod network;
@@ -147,9 +146,9 @@ pub fn tapirihia_raraunga(ingoa_konae: &str, raraunga: &str) -> Result<(), ReOEr
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::thread;
-    use std::time::Duration;
-    use uuid::Uuid;
+    use std::path::Path;
+    use std::fs;
+    use std::fs::File;
 
     #[test]
     fn test_whakamuka() {
@@ -157,7 +156,7 @@ mod tests {
         let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
-        assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3"); // Expected hash for "Hello, world!"
+        assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3");
     }
 
     #[test]
@@ -166,7 +165,7 @@ mod tests {
         let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
-        assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); // Expected hash for empty string
+        assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
     }
 
     #[test]
@@ -176,7 +175,7 @@ mod tests {
         let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
-        assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd"); // Expected HMAC for "Hello, world!" with key "supersecretkey"
+        assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd");
     }
 
     #[test]
@@ -186,7 +185,7 @@ mod tests {
         let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
-        assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f"); // Expected HMAC for "Hello, world!" with empty key
+        assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f");
     }
 
     #[test]
@@ -207,7 +206,7 @@ mod tests {
         let ingoa_konae = "testfile.txt";
         let _ = File::create(ingoa_konae);
         let result = tapirihia_konae(ingoa_konae);
-        assert!(result.is_err()); // Expect an error because the file already exists
+        assert!(result.is_err());
     }
 
     #[test]
