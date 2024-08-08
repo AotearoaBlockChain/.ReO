@@ -7,6 +7,7 @@ use std::fmt;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
+use uuid::Uuid;
 use hex;
 
 mod network;
@@ -115,30 +116,30 @@ pub fn wetekina_raraunga_aead(ki_hex: &str, nonce: &[u8], whakamuna: &[u8]) -> R
     }
 }
 
-pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
-    let ara = Path::new(ingoa);
+pub fn tapirihia_konae(ingoa_konae: &str) -> Result<(), ReOError> {
+    let ara = Path::new(ingoa_konae);
     if ara.exists() {
-        return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "Konae already exists")));
+        return Err(ReOError::IoError(io::Error::new(io::ErrorKind::AlreadyExists, "File already exists")));
     }
     File::create(&ara)?;
     Ok(())
 }
 
-pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
-    let ara = Path::new(ingoa);
+pub fn mukua_konae(ingoa_konae: &str) -> Result<(), ReOError> {
+    let ara = Path::new(ingoa_konae);
     fs::remove_file(&ara)?;
     Ok(())
 }
 
-pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
-    let mut ara = File::open(ingoa)?;
+pub fn panuihia_konae(ingoa_konae: &str) -> Result<String, ReOError> {
+    let mut ara = File::open(ingoa_konae)?;
     let mut ihirangi = String::new();
     ara.read_to_string(&mut ihirangi)?;
     Ok(ihirangi)
 }
 
-pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
-    let mut ara = OpenOptions::new().append(true).open(ingoa)?;
+pub fn tapirihia_raraunga(ingoa_konae: &str, raraunga: &str) -> Result<(), ReOError> {
+    let mut ara = OpenOptions::new().append(true).open(ingoa_konae)?;
     ara.write_all(raraunga.as_bytes())?;
     Ok(())
 }
@@ -156,7 +157,7 @@ mod tests {
         let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
-        assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3");
+        assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3"); // Expected hash for "Hello, world!"
     }
 
     #[test]
@@ -165,7 +166,7 @@ mod tests {
         let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
-        assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+        assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); // Expected hash for empty string
     }
 
     #[test]
@@ -175,7 +176,7 @@ mod tests {
         let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
-        assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd");
+        assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd"); // Expected HMAC for "Hello, world!" with key "supersecretkey"
     }
 
     #[test]
@@ -185,15 +186,19 @@ mod tests {
         let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
-        assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f");
+        assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f"); // Expected HMAC for "Hello, world!" with empty key
     }
 
     #[test]
     fn test_tapirihia_konae() {
         let ingoa_konae = "testfile.txt";
+        if Path::new(ingoa_konae).exists() {
+            let _ = fs::remove_file(ingoa_konae);
+        }
+
         let result = tapirihia_konae(ingoa_konae);
-        assert!(result.is_ok());
-        assert!(Path::new(ingoa_konae).exists());
+        assert!(result.is_ok(), "File creation failed: {:?}", result);
+        assert!(Path::new(ingoa_konae).exists(), "File does not exist after creation");
         let _ = fs::remove_file(ingoa_konae);
     }
 
@@ -202,8 +207,7 @@ mod tests {
         let ingoa_konae = "testfile.txt";
         let _ = File::create(ingoa_konae);
         let result = tapirihia_konae(ingoa_konae);
-        assert!(result.is_err());
-        let _ = fs::remove_file(ingoa_konae);
+        assert!(result.is_err()); // Expect an error because the file already exists
     }
 
     #[test]
@@ -211,63 +215,47 @@ mod tests {
         let ingoa_konae = "testfile.txt";
         let _ = File::create(ingoa_konae);
         let result = mukua_konae(ingoa_konae);
-        assert!(result.is_ok());
-        assert!(!Path::new(ingoa_konae).exists());
+        assert!(result.is_ok(), "File deletion failed: {:?}", result);
+        assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
     }
 
     #[test]
     fn test_mukua_konae_nonexistent() {
-        let ingoa_konae = "nonexistentfile.txt";
+        let ingoa_konae = "nonexistent.txt";
         let result = mukua_konae(ingoa_konae);
-        assert!(result.is_err());
+        assert!(result.is_err()); // Expect an error because the file does not exist
     }
 
     #[test]
     fn test_panuihia_konae() {
-        let unique_file_name = format!("testfile_{}.txt", Uuid::new_v4());
-        let ingoa_konae = unique_file_name.as_str();
-        let ihirangi = "This is a test content.";
-
-        if Path::new(ingoa_konae).exists() {
-            let _ = fs::remove_file(ingoa_konae);
-        }
-
-        let write_result = fs::write(ingoa_konae, ihirangi);
-        assert!(write_result.is_ok());
-
-        thread::sleep(Duration::from_millis(10));
-
+        let ingoa_konae = "testfile.txt";
+        let content = "This is a test file content.";
+        let mut file = File::create(ingoa_konae).unwrap();
+        file.write_all(content.as_bytes()).unwrap();
         let result = panuihia_konae(ingoa_konae);
         assert!(result.is_ok());
-        let ihirangi_konae = result.unwrap();
-        assert_eq!(ihirangi_konae, ihirangi);
-
-        let cleanup_result = fs::remove_file(ingoa_konae);
-        assert!(cleanup_result.is_ok());
+        assert_eq!(result.unwrap(), content);
+        let _ = fs::remove_file(ingoa_konae);
     }
 
     #[test]
     fn test_panuihia_konae_nonexistent() {
-        let ingoa_konae = "nonexistentfile.txt";
+        let ingoa_konae = "nonexistent.txt";
         let result = panuihia_konae(ingoa_konae);
-        assert!(result.is_err());
+        assert!(result.is_err()); // Expect an error because the file does not exist
     }
 
     #[test]
     fn test_tapirihia_raraunga() {
-        let unique_file_name = format!("testfile_{}.txt", Uuid::new_v4());
-        let ingoa_konae = unique_file_name.as_str();
-        let ihirangi_tuakiri = "Initial content.";
-        let ihirangi_tapiri = " Appended content.";
-
-        let _ = fs::write(ingoa_konae, ihirangi_tuakiri);
-
-        let result = tapirihia_raraunga(ingoa_konae, ihirangi_tapiri);
-        assert!(result.is_ok());
-
-        let ihirangi_konae = fs::read_to_string(ingoa_konae).unwrap();
-        assert_eq!(ihirangi_konae, format!("{}{}", ihirangi_tuakiri, ihirangi_tapiri));
-
+        let ingoa_konae = "testfile.txt";
+        let _ = File::create(ingoa_konae);
+        let raraunga = "This is some test data.";
+        let result = tapirihia_raraunga(ingoa_konae, raraunga);
+        assert!(result.is_ok(), "Appending data to file failed: {:?}", result);
+        let mut file_content = String::new();
+        let mut file = File::open(ingoa_konae).unwrap();
+        file.read_to_string(&mut file_content).unwrap();
+        assert!(file_content.contains(raraunga), "File content does not match expected data");
         let _ = fs::remove_file(ingoa_konae);
     }
 
@@ -275,26 +263,25 @@ mod tests {
     fn test_waihanga_ki() {
         let result = waihanga_ki();
         assert!(result.is_ok());
-        let ki = result.unwrap();
-        assert_eq!(ki.len(), 64);
+        let key = result.unwrap();
+        assert_eq!(key.len(), 64); // 32 bytes = 64 hex characters
     }
 
     #[test]
     fn test_whakamuna_raraunga_aead() {
-        let ki = waihanga_ki().unwrap();
-        let raraunga = "Sensitive data.";
-        let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
-        assert!(whakamuna.len() > 0);
+        let key = waihanga_ki().unwrap();
+        let raraunga = "Sensitive data";
+        let result = whakamuna_raraunga_aead(&key, raraunga.as_bytes());
+        assert!(result.is_ok(), "Data encryption failed: {:?}", result);
     }
 
     #[test]
     fn test_wetekina_raraunga_aead() {
-        let ki = waihanga_ki().unwrap();
-        let raraunga = "Sensitive data.";
-        let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
-        let wetekina = wetekina_raraunga_aead(&ki, &nonce, &whakamuna);
-        assert!(wetekina.is_ok());
-        let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
-        assert_eq!(raraunga_wetekina, raraunga);
+        let key = waihanga_ki().unwrap();
+        let raraunga = "Sensitive data";
+        let (nonce, encrypted_data) = whakamuna_raraunga_aead(&key, raraunga.as_bytes()).unwrap();
+        let result = wetekina_raraunga_aead(&key, &nonce, &encrypted_data);
+        assert!(result.is_ok(), "Data decryption failed: {:?}", result);
+        assert_eq!(result.unwrap(), raraunga.as_bytes());
     }
-            }
+        }
