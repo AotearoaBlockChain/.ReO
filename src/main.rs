@@ -7,18 +7,15 @@ use std::fmt;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
-use uuid::Uuid;
 use hex;
 
 mod network;
 
 #[tokio::main]
 async fn main() {
-    // Call the function to run the HTTP server
     network::run_server().await;
 }
 
-// Custom error type
 #[derive(Debug)]
 pub enum ReOError {
     IoError(io::Error),
@@ -56,7 +53,6 @@ impl From<hex::FromHexError> for ReOError {
     }
 }
 
-// Hash data
 pub fn whakamuka(raraunga: &str) -> Result<String, ReOError> {
     let mut horopaki = Context::new(&SHA256);
     horopaki.update(raraunga.as_bytes());
@@ -64,14 +60,12 @@ pub fn whakamuka(raraunga: &str) -> Result<String, ReOError> {
     Ok(hex::encode(whakamuka.as_ref()))
 }
 
-// Create HMAC
 pub fn hangaia_hmac(ki: &str, raraunga: &str) -> Result<String, ReOError> {
     let hmac_ki = hmac::Key::new(hmac::HMAC_SHA256, ki.as_bytes());
     let waitohu = hmac::sign(&hmac_ki, raraunga.as_bytes());
     Ok(hex::encode(waitohu.as_ref()))
 }
 
-// Generate a random key
 pub fn waihanga_ki() -> Result<String, ReOError> {
     let rng = SystemRandom::new();
     let mut ki = [0u8; 32];
@@ -79,7 +73,6 @@ pub fn waihanga_ki() -> Result<String, ReOError> {
     Ok(hex::encode(ki))
 }
 
-// Encrypt data
 pub fn whakamuna_raraunga_aead(ki_hex: &str, raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
     let ki = hex::decode(ki_hex)?;
     
@@ -104,7 +97,6 @@ pub fn whakamuna_raraunga_aead(ki_hex: &str, raraunga: &[u8]) -> Result<(Vec<u8>
     }
 }
 
-// Decrypt data
 pub fn wetekina_raraunga_aead(ki_hex: &str, nonce: &[u8], whakamuna: &[u8]) -> Result<Vec<u8>, ReOError> {
     let ki = hex::decode(ki_hex)?;
 
@@ -123,7 +115,6 @@ pub fn wetekina_raraunga_aead(ki_hex: &str, nonce: &[u8], whakamuna: &[u8]) -> R
     }
 }
 
-// Add a file
 pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     if ara.exists() {
@@ -133,14 +124,12 @@ pub fn tapirihia_konae(ingoa: &str) -> Result<(), ReOError> {
     Ok(())
 }
 
-// Delete a file
 pub fn mukua_konae(ingoa: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa);
     fs::remove_file(&ara)?;
     Ok(())
 }
 
-// Read from a file
 pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
     let mut ara = File::open(ingoa)?;
     let mut ihirangi = String::new();
@@ -148,7 +137,6 @@ pub fn panuihia_konae(ingoa: &str) -> Result<String, ReOError> {
     Ok(ihirangi)
 }
 
-// Append data to a file
 pub fn tapirihia_raraunga(ingoa: &str, raraunga: &str) -> Result<(), ReOError> {
     let mut ara = OpenOptions::new().append(true).open(ingoa)?;
     ara.write_all(raraunga.as_bytes())?;
@@ -168,7 +156,7 @@ mod tests {
         let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
-        assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3"); // Expected hash for "Hello, world!"
+        assert_eq!(hash, "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3");
     }
 
     #[test]
@@ -177,7 +165,7 @@ mod tests {
         let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
-        assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); // Expected hash for empty string
+        assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
     }
 
     #[test]
@@ -187,7 +175,7 @@ mod tests {
         let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
-        assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd"); // Expected HMAC for "Hello, world!" with key "supersecretkey"
+        assert_eq!(hmac, "aa14d38e4aa8e16dc388e4a50e4549779413c834a8076996008e2befe6a873dd");
     }
 
     #[test]
@@ -197,7 +185,7 @@ mod tests {
         let result = hangaia_hmac(ki, raraunga);
         assert!(result.is_ok());
         let hmac = result.unwrap();
-        assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f"); // Expected HMAC for "Hello, world!" with empty key
+        assert_eq!(hmac, "0d192eb5bc5e4407192197cbf9e1658295fa3ff995b3ff914f3cc7c38d83b10f");
     }
 
     #[test]
@@ -206,7 +194,7 @@ mod tests {
         let result = tapirihia_konae(ingoa_konae);
         assert!(result.is_ok());
         assert!(Path::new(ingoa_konae).exists());
-        let _ = fs::remove_file(ingoa_konae); // Clean up
+        let _ = fs::remove_file(ingoa_konae);
     }
 
     #[test]
@@ -214,14 +202,14 @@ mod tests {
         let ingoa_konae = "testfile.txt";
         let _ = File::create(ingoa_konae);
         let result = tapirihia_konae(ingoa_konae);
-        assert!(result.is_err()); // Expect an error because the file already exists
-        let _ = fs::remove_file(ingoa_konae); // Clean up
+        assert!(result.is_err());
+        let _ = fs::remove_file(ingoa_konae);
     }
 
     #[test]
     fn test_mukua_konae() {
         let ingoa_konae = "testfile.txt";
-        let _ = File::create(ingoa_konae); // Ensure the file exists
+        let _ = File::create(ingoa_konae);
         let result = mukua_konae(ingoa_konae);
         assert!(result.is_ok());
         assert!(!Path::new(ingoa_konae).exists());
@@ -231,7 +219,7 @@ mod tests {
     fn test_mukua_konae_nonexistent() {
         let ingoa_konae = "nonexistentfile.txt";
         let result = mukua_konae(ingoa_konae);
-        assert!(result.is_err()); // Expect an error since the file doesn't exist
+        assert!(result.is_err());
     }
 
     #[test]
@@ -240,34 +228,29 @@ mod tests {
         let ingoa_konae = unique_file_name.as_str();
         let ihirangi = "This is a test content.";
 
-        // Ensure previous file (if any) is removed
         if Path::new(ingoa_konae).exists() {
             let _ = fs::remove_file(ingoa_konae);
         }
 
-        // Write content to the file
         let write_result = fs::write(ingoa_konae, ihirangi);
-        assert!(write_result.is_ok(), "Failed to write to test file: {:?}", write_result);
+        assert!(write_result.is_ok());
 
-        // Wait a bit to ensure file system operations complete
         thread::sleep(Duration::from_millis(10));
 
-        // Ensure file write has been successful before reading it
         let result = panuihia_konae(ingoa_konae);
-        assert!(result.is_ok(), "Failed to read the file: {:?}", result);
+        assert!(result.is_ok());
         let ihirangi_konae = result.unwrap();
-        assert_eq!(ihirangi_konae, ihirangi, "File content does not match expected content");
+        assert_eq!(ihirangi_konae, ihirangi);
 
-        // Clean up
         let cleanup_result = fs::remove_file(ingoa_konae);
-        assert!(cleanup_result.is_ok(), "Failed to clean up test file: {:?}", cleanup_result);
+        assert!(cleanup_result.is_ok());
     }
 
     #[test]
     fn test_panuihia_konae_nonexistent() {
         let ingoa_konae = "nonexistentfile.txt";
         let result = panuihia_konae(ingoa_konae);
-        assert!(result.is_err()); // Expect an error since the file doesn't exist
+        assert!(result.is_err());
     }
 
     #[test]
@@ -277,18 +260,14 @@ mod tests {
         let ihirangi_tuakiri = "Initial content.";
         let ihirangi_tapiri = " Appended content.";
 
-        // Write initial content to the file
         let _ = fs::write(ingoa_konae, ihirangi_tuakiri);
 
-        // Append content to the file
         let result = tapirihia_raraunga(ingoa_konae, ihirangi_tapiri);
-        assert!(result.is_ok(), "Failed to append data to file: {:?}", result);
+        assert!(result.is_ok());
 
-        // Read the file to check content
         let ihirangi_konae = fs::read_to_string(ingoa_konae).unwrap();
-        assert_eq!(ihirangi_konae, format!("{}{}", ihirangi_tuakiri, ihirangi_tapiri), "File content does not match expected appended content");
+        assert_eq!(ihirangi_konae, format!("{}{}", ihirangi_tuakiri, ihirangi_tapiri));
 
-        // Clean up
         let _ = fs::remove_file(ingoa_konae);
     }
 
@@ -297,7 +276,7 @@ mod tests {
         let result = waihanga_ki();
         assert!(result.is_ok());
         let ki = result.unwrap();
-        assert_eq!(ki.len(), 64); // Expected length for a 256-bit key in hex
+        assert_eq!(ki.len(), 64);
     }
 
     #[test]
@@ -305,7 +284,7 @@ mod tests {
         let ki = waihanga_ki().unwrap();
         let raraunga = "Sensitive data.";
         let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
-        assert!(whakamuna.len() > 0); // Ensure encryption was successful
+        assert!(whakamuna.len() > 0);
     }
 
     #[test]
@@ -314,10 +293,8 @@ mod tests {
         let raraunga = "Sensitive data.";
         let (nonce, whakamuna) = whakamuna_raraunga_aead(&ki, raraunga.as_bytes()).unwrap();
         let wetekina = wetekina_raraunga_aead(&ki, &nonce, &whakamuna);
-        assert!(wetekina.is_ok(), "Decryption failed: {:?}", wetekina);
-        let raraunga_wetekina = String::from_utf8(wetekina.unwrap());
-        assert!(raraunga_wetekina.is_ok(), "Failed to convert decrypted data to string");
-        let raraunga_wetekina = raraunga_wetekina.unwrap();
-        assert_eq!(raraunga_wetekina, raraunga, "Decrypted data does not match original data");
+        assert!(wetekina.is_ok());
+        let raraunga_wetekina = String::from_utf8(wetekina.unwrap()).unwrap();
+        assert_eq!(raraunga_wetekina, raraunga);
     }
             }
