@@ -30,6 +30,7 @@ async fn main() {
         .run(([127, 0, 0, 1], 8080))
         .await;
 }
+
 #[derive(Debug)]
 pub enum ReOError {
     IoError(io::Error),
