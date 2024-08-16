@@ -10,6 +10,7 @@ use std::path::Path;
 use hex;
 use warp::Filter;
 
+#[cfg(test)]
 mod test;
 mod network;
 
