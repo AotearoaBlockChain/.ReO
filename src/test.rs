@@ -110,6 +110,19 @@ mod tests {
     }
 
     #[test]
+fn test_mukua_konae() {
+    let ingoa_konae = "testfile.txt";
+    // Ensure the file is created
+    let _ = File::create(ingoa_konae).expect("Failed to create file");
+    assert!(Path::new(ingoa_konae).exists(), "File should exist before deletion");
+
+    // Attempt to delete the file
+    let result = mukua_konae(ingoa_konae);
+    assert!(result.is_ok(), "Failed to delete file: {:?}", result);
+    assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
+}
+
+    #[test]
     fn test_mukua_konae() {
         // Setup code here...
 
