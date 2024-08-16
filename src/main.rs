@@ -158,6 +158,7 @@ pub fn panuihia_konae(ingoa_konae: &str) -> Result<String, ReOError> {
 pub fn tapirihia_raraunga(ingoa_konae: &str, raraunga: &str) -> Result<(), ReOError> {
     let mut ara = OpenOptions::new().append(true).open(ingoa_konae)?;
     ara.write_all(raraunga.as_bytes())?;
+
     Ok(())
-    }
+    
 }
