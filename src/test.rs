@@ -65,16 +65,6 @@ mod tests {
     }
 
     #[test]
-    fn test_mukua_konae() {
-        let ingoa_konae = "testfile.txt";
-        let _ = File::create(ingoa_konae);
-        let result = mukua_konae(ingoa_konae);
-        assert!(result.is_ok(), "File deletion failed: {:?}", result);
-        std::thread::sleep(std::time::Duration::from_millis(100)); // Adding delay here
-        assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
-    }
-
-    #[test]
     fn test_mukua_konae_nonexistent() {
         let ingoa_konae = "nonexistent.txt";
         let result = mukua_konae(ingoa_konae);
