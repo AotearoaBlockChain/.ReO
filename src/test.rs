@@ -1,3 +1,6 @@
+use std::io::Write;
+use std::io::Read;
+
 use crate::{whakamuka, hangaia_hmac, tapirihia_konae, mukua_konae, panuihia_konae, tapirihia_raraunga};
 
 #[cfg(test)]
