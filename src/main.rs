@@ -11,7 +11,7 @@ use hex;
 use warp::Filter;
 
 #[cfg(test)]
-mod tests;
+mod tests.rs;
 
 mod network;
 
