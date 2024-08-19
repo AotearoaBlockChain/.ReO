@@ -130,4 +130,5 @@ fn test_mukua_konae() {
 
     // Final check
     assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
+    }
 }
