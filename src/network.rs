@@ -60,7 +60,12 @@ pub async fn run_server() {
             info!("Received data at /whakamuka: {:?}", body);
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received: {:?}", body),
-            })
+            });
+
+#[allow(dead_code)]
+pub async fn run_server() {
+    // Your code here
+}
         });
 
     // Define the route for 'hmac'
