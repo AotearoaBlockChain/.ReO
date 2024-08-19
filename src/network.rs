@@ -73,19 +73,9 @@ pub async fn run_server() {
             info!("Received data at /whakamuka: {:?}", body);
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received: {:?}", body),
-
-            });
-
-#[allow(dead_code)]
-pub async fn run_server() {
-    // Your code here
-}
-        
-
-            });
-        })
+            })
+        }) // Close the map and recover properly
         .recover(handle_rejection);  // Add error recovery
-}
 
     let aratuka_hmac = warp::path("hmac")
         .and(warp::body::json())
@@ -94,7 +84,7 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received HMAC: {:?}", body),
             })
-        })
+        }) // Close the map and recover properly
         .recover(handle_rejection);  // Add error recovery
 
     let aratuka_hanga_ki = warp::path("hanga_ki")
@@ -104,7 +94,7 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received Whakamuna: {:?}", body),
             })
-        })
+        }) // Close the map and recover properly
         .recover(handle_rejection);  // Add error recovery
 
     let aratuka_whakamuna = warp::path("whakamuna")
@@ -114,7 +104,7 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received Wetekina: {:?}", body),
             })
-        })
+        }) // Close the map and recover properly
         .recover(handle_rejection);  // Add error recovery
 
     // Combine all routes ensuring they all return a valid Reply
