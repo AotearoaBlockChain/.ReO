@@ -79,11 +79,12 @@ pub async fn run_server() {
 pub async fn run_server() {
     // Your code here
 }
-        });
+        
 
-            })
+            });
         })
         .recover(handle_rejection);  // Add error recovery
+}
 
     let aratuka_hmac = warp::path("hmac")
         .and(warp::body::json())
