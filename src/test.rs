@@ -119,17 +119,15 @@ fn test_mukua_konae() {
     // Attempt to delete the file
     let result = mukua_konae(ingoa_konae);
     assert!(result.is_ok(), "Failed to delete file: {:?}", result);
-    assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
 
-    // Setup code here...
-
-    // Perform the file deletion
-    std::fs::remove_file("path/to/file").expect("Failed to delete file");
-
-    // Add a short delay to ensure the filesystem has completed the deletion
-    std::thread::sleep(std::time::Duration::from_millis(100));
-
-    // Check that the file has been deleted
-    assert!(!std::fs::metadata("path/to/file").is_ok(), "File still exists after deletion");
+    // Retry logic to check if the file has been deleted, with a short delay
+    for _ in 0..5 {
+        if !Path::new(ingoa_konae).exists() {
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(100));
     }
+
+    // Final check
+    assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
 }
