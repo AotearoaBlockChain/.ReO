@@ -1,14 +1,14 @@
 use std::io::Write;
 use std::io::Read;
+use std::fs;
+use std::fs::File;
+use std::path::Path;
 
 use crate::{whakamuka, hangaia_hmac, tapirihia_konae, mukua_konae, panuihia_konae, tapirihia_raraunga};
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::Path;
-    use std::fs;
-    use std::fs::File;
 
     #[test]
     fn test_whakamuka() {
@@ -132,6 +132,4 @@ fn test_mukua_konae() {
     // Check that the file has been deleted
     assert!(!std::fs::metadata("path/to/file").is_ok(), "File still exists after deletion");
     }
-
-    // Add other tests here...
 }
