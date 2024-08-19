@@ -17,9 +17,9 @@ async fn main() {
         });
 
     // Log the server start
-    info!("Starting the server at http://127.0.0.1:8080");
+    info!("Starting the server at http://127.0.0.1:8081");
 
-    // Start the server
+    // Start the server for the hello route
     warp::serve(hello)
         .run(([127, 0, 0, 1], 8081))
         .await;
@@ -36,20 +36,19 @@ struct UrungaRaraunga {
     field2: String,
 }
 
-// Add more structs as necessary
 #[derive(Debug, Deserialize, Serialize)]
 struct UrungaHmac {
-    // fields
+    // Add relevant fields
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct UrungaWhakamuna {
-    // fields
+    // Add relevant fields
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct UrungaWetekina {
-    // fields
+    // Add relevant fields
 }
 
 pub async fn run_server() {
