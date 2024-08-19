@@ -3,27 +3,8 @@
 use warp::Filter;
 use serde::{Deserialize, Serialize};
 use log::info;
-
-#[tokio::main]
-async fn main() {
-    // Initialize logging
-    env_logger::init();
-
-    // Define a simple route for health check or basic response
-    let hello = warp::path::end()
-        .map(|| {
-            info!("Handling request at root path");
-            warp::reply::html("Hello, ABC Blockchain!")
-        });
-
-    // Log the server start
-    info!("Starting the server at http://127.0.0.1:8081");
-
-    // Start the server for the hello route
-    warp::serve(hello)
-        .run(([127, 0, 0, 1], 8081))
-        .await;
-}
+use warp::reject::Reject;
+use warp::http::StatusCode;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TauhoheApi {
@@ -51,8 +32,40 @@ struct UrungaWetekina {
     // Add relevant fields
 }
 
+// Custom error type to implement `Reject` trait for warp rejection handling
+#[derive(Debug)]
+struct CustomError {
+    message: String,
+}
+
+impl Reject for CustomError {}
+
+async fn handle_rejection(err: warp::Rejection) -> Result<impl warp::Reply, warp::Rejection> {
+    if let Some(_) = err.find::<warp::reject::InvalidQuery>() {
+        Ok(warp::reply::with_status(
+            "Invalid query parameters".to_string(),
+            StatusCode::BAD_REQUEST,
+        ))
+    } else if let Some(_) = err.find::<warp::reject::MethodNotAllowed>() {
+        Ok(warp::reply::with_status(
+            "Method not allowed".to_string(),
+            StatusCode::METHOD_NOT_ALLOWED,
+        ))
+    } else if let Some(custom_error) = err.find::<CustomError>() {
+        Ok(warp::reply::with_status(
+            custom_error.message.clone(),
+            StatusCode::BAD_REQUEST,
+        ))
+    } else {
+        // For any other errors, return a 500 Internal Server Error
+        Ok(warp::reply::with_status(
+            "Internal Server Error".to_string(),
+            StatusCode::INTERNAL_SERVER_ERROR,
+        ))
+    }
+}
+
 pub async fn run_server() {
-    // Define the route for 'whakamuka'
     let aratuka_whakamuka = warp::path("whakamuka")
         .and(warp::body::json())
         .map(|body: UrungaRaraunga| {
@@ -60,9 +73,9 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received: {:?}", body),
             })
-        });
+        })
+        .recover(handle_rejection);  // Add error recovery
 
-    // Define the route for 'hmac'
     let aratuka_hmac = warp::path("hmac")
         .and(warp::body::json())
         .map(|body: UrungaHmac| {
@@ -70,9 +83,9 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received HMAC: {:?}", body),
             })
-        });
+        })
+        .recover(handle_rejection);  // Add error recovery
 
-    // Define the route for 'hanga_ki'
     let aratuka_hanga_ki = warp::path("hanga_ki")
         .and(warp::body::json())
         .map(|body: UrungaWhakamuna| {
@@ -80,9 +93,9 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received Whakamuna: {:?}", body),
             })
-        });
+        })
+        .recover(handle_rejection);  // Add error recovery
 
-    // Define the route for 'whakamuna'
     let aratuka_whakamuna = warp::path("whakamuna")
         .and(warp::body::json())
         .map(|body: UrungaWetekina| {
@@ -90,13 +103,15 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received Wetekina: {:?}", body),
             })
-        });
+        })
+        .recover(handle_rejection);  // Add error recovery
 
-    // Combine all routes
+    // Combine all routes ensuring they all return a valid Reply
     let aratuka = aratuka_whakamuka
         .or(aratuka_hmac)
         .or(aratuka_hanga_ki)
-        .or(aratuka_whakamuna);
+        .or(aratuka_whakamuna)
+        .recover(handle_rejection);  // Add global error recovery
 
     // Start the server with all routes
     info!("API Server running at http://127.0.0.1:8080");
