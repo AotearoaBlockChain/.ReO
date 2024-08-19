@@ -65,6 +65,7 @@ async fn handle_rejection(err: warp::Rejection) -> Result<impl warp::Reply, warp
     }
 }
 
+#[allow(dead_code)]
 pub async fn run_server() {
     let aratuka_whakamuka = warp::path("whakamuka")
         .and(warp::body::json())
