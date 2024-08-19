@@ -1,14 +1,14 @@
 use std::io::Write;
 use std::io::Read;
+use std::fs;
+use std::fs::File;
+use std::path::Path;
 
 use crate::{whakamuka, hangaia_hmac, tapirihia_konae, mukua_konae, panuihia_konae, tapirihia_raraunga};
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::Path;
-    use std::fs;
-    use std::fs::File;
 
     #[test]
     fn test_whakamuka() {
@@ -110,31 +110,15 @@ mod tests {
     }
 
     #[test]
-fn test_mukua_konae() {
-    let ingoa_konae = "testfile.txt";
-    // Ensure the file is created
-    let _ = File::create(ingoa_konae).expect("Failed to create file");
-    assert!(Path::new(ingoa_konae).exists(), "File should exist before deletion");
-
-    // Attempt to delete the file
-    let result = mukua_konae(ingoa_konae);
-    assert!(result.is_ok(), "Failed to delete file: {:?}", result);
-    assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
-}
-
-    #[test]
     fn test_mukua_konae() {
-        // Setup code here...
+        let ingoa_konae = "testfile.txt";
+        // Ensure the file is created
+        let _ = File::create(ingoa_konae).expect("Failed to create file");
+        assert!(Path::new(ingoa_konae).exists(), "File should exist before deletion");
 
-        // Perform the file deletion
-        std::fs::remove_file("path/to/file").expect("Failed to delete file");
-
-        // Add a short delay to ensure the filesystem has completed the deletion
-        std::thread::sleep(std::time::Duration::from_millis(100));
-
-        // Check that the file has been deleted
-        assert!(!std::fs::metadata("path/to/file").is_ok(), "File still exists after deletion");
+        // Attempt to delete the file
+        let result = mukua_konae(ingoa_konae);
+        assert!(result.is_ok(), "Failed to delete file: {:?}", result);
+        assert!(!Path::new(ingoa_konae).exists(), "File still exists after deletion");
     }
-
-    // Add other tests here...
 }
