@@ -1,15 +1,10 @@
-use std::io::Write;
-use std::io::Read;
-use std::fs;
-use std::fs::File;
-use std::path::Path;
-
-use crate::{whakamuka, hangaia_hmac, tapirihia_konae, mukua_konae, panuihia_konae, tapirihia_raraunga};
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::thread;
+    use std::fs::{self, File};
+    use std::io::Write;
+    use std::path::Path;
 
     #[test]
     fn test_whakamuka() {
@@ -162,6 +157,12 @@ mod tests {
             mukua_konae(ingoa_konae).unwrap();
         });
 
+<<<<<<< HEAD
+=======
+        // Retry mechanism: Give a small delay before trying to access the file.
+        std::thread::sleep(std::time::Duration::from_millis(50));
+
+>>>>>>> ae8d80ad65f94f718a8d3bfcd657b872a83d6193
         // Simulate concurrent access by attempting to open the file during deletion
         let open_result = File::open(ingoa_konae);
         assert!(open_result.is_err(), "File should not be accessible during deletion");
@@ -173,6 +174,7 @@ mod tests {
     }
 
     #[test]
+<<<<<<< HEAD
     fn test_panuihia_konae() {
         let ingoa_konae = "testfile.txt";
         let content = "This is a test file content.";
@@ -185,6 +187,8 @@ mod tests {
     }
 
     #[test]
+=======
+>>>>>>> ae8d80ad65f94f718a8d3bfcd657b872a83d6193
     fn test_panuihia_konae_binary_file() {
         let ingoa_konae = "testfile.bin";
         let binary_data = vec![0, 159, 146, 150];
@@ -195,12 +199,17 @@ mod tests {
         assert!(result.is_ok());
         let read_data = result.unwrap();
         
+<<<<<<< HEAD
         assert_eq!(read_data.into_bytes(), binary_data);
+=======
+        assert_eq!(read_data, binary_data);  // Compare directly as Vec<u8>
+>>>>>>> ae8d80ad65f94f718a8d3bfcd657b872a83d6193
         
         let _ = fs::remove_file(ingoa_konae);
     }
 
     #[test]
+<<<<<<< HEAD
     fn test_panuihia_konae_nonexistent() {
         let ingoa_konae = "nonexistent.txt";
         let result = panuihia_konae(ingoa_konae);
@@ -208,3 +217,20 @@ mod tests {
     }
 }
         
+=======
+    fn test_panuihia_konae() {
+        let ingoa_konae = "testfile.txt";
+        let content = "This is a test file content.";
+        let mut file = File::create(ingoa_konae).unwrap();
+        file.write_all(content.as_bytes()).unwrap();
+        let result = panuihia_konae(ingoa_konae);
+        assert!(result.is_ok());
+
+        // Convert read_data (Vec<u8>) back to String for comparison
+        let read_data = String::from_utf8(result.unwrap()).unwrap();
+        assert_eq!(read_data, content);  // Compare as Strings
+
+        let _ = fs::remove_file(ingoa_konae);
+    }
+}
+>>>>>>> ae8d80ad65f94f718a8d3bfcd657b872a83d6193
