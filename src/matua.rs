@@ -11,14 +11,14 @@ use hex;
 use warp::Filter;
 
 #[cfg(test)]
-mod test;
-mod network;
+mod whakamatautau;
+mod whatunga;
 
 #[tokio::main]
 async fn main() {
     // GET /hello => 200 OK with body "Hello, World!"
-    let hello = warp::path("hello")
-        .map(|| "Hello, World!");
+    let hello = warp::path("Kia Ora")
+        .map(|| "Kia Ora, Aotearoa!");
 
     // GET / => 200 OK with body "Warp server is running!"
     let root = warp::path::end()

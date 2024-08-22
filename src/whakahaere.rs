@@ -1,4 +1,4 @@
-// src/manage.rs
+// src/whakahaere.rs
 
 pub struct HangangaKonae {
     // Whakatakotoria nga apure i konei

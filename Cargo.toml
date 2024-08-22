@@ -15,7 +15,8 @@ serde_json = "1.0"
 untrusted = "0.7"
 hex = "0.4"
 
-[bin]
-name = "main"
+[[bin]]
+name = "matua"
 path = "src/matua.rs"
+
 
