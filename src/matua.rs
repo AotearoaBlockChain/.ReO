@@ -11,14 +11,14 @@ use hex;
 use warp::Filter;
 
 #[cfg(test)]
-mod test;
-mod network;
+mod whakamatautau;
+mod whatunga;
 
 #[tokio::main]
 async fn main() {
-    // GET /hello => 200 OK with body "Hello, World!"
-    let hello = warp::path("hello")
-        .map(|| "Hello, World!");
+    // GET /Kia Ora => 200 OK with body "Kia Ora, Aotearoa!"
+    let hello = warp::path("Kia Ora")
+        .map(|| "Kia Ora, Aotearoa!");
 
     // GET / => 200 OK with body "Warp server is running!"
     let root = warp::path::end()
@@ -92,7 +92,7 @@ pub fn waihanga_ki() -> Result<String, ReOError> {
 
 pub fn whakamuna_raraunga_aead(ki_hex: &str, raraunga: &[u8]) -> Result<(Vec<u8>, Vec<u8>), ReOError> {
     let ki = hex::decode(ki_hex)?;
-    
+
     if ki.len() != 32 {
         return Err(ReOError::RingError(ring::error::Unspecified));
     }
@@ -107,7 +107,7 @@ pub fn whakamuna_raraunga_aead(ki_hex: &str, raraunga: &[u8]) -> Result<(Vec<u8>
     let nonce = Nonce::assume_unique_for_key(nonce_purua);
     let mut in_out = raraunga.to_vec();
     let ki_powhiri = LessSafeKey::new(ki_matapokere);
-    
+
     match ki_powhiri.seal_in_place_append_tag(nonce, Aad::empty(), &mut in_out) {
         Ok(()) => Ok((nonce_purua.to_vec(), in_out)),
         Err(e) => Err(ReOError::RingError(e))
@@ -125,7 +125,7 @@ pub fn wetekina_raraunga_aead(ki_hex: &str, nonce: &[u8], whakamuna: &[u8]) -> R
     let nonce = Nonce::try_assume_unique_for_key(nonce)?;
     let mut in_out = whakamuna.to_vec();
     let ki_powhiri = LessSafeKey::new(ki_matapokere);
-    
+
     match ki_powhiri.open_in_place(nonce, Aad::empty(), &mut in_out) {
         Ok(data) => Ok(data.to_vec()),
         Err(e) => Err(ReOError::RingError(e))
@@ -144,13 +144,22 @@ pub fn tapirihia_konae(ingoa_konae: &str) -> Result<(), ReOError> {
 pub fn mukua_konae(ingoa_konae: &str) -> Result<(), ReOError> {
     let ara = Path::new(ingoa_konae);
     fs::remove_file(&ara)?;
-    Ok(())
+
+    // Retry mechanism to ensure the file is deleted
+    for _ in 0..5 {
+        if !ara.exists() {
+            return Ok(());
+        }
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    }
+
+    Err(ReOError::IoError(io::Error::new(io::ErrorKind::Other, "Failed to delete file")))
 }
 
-pub fn panuihia_konae(ingoa_konae: &str) -> Result<String, ReOError> {
+pub fn panuihia_konae(ingoa_konae: &str) -> Result<Vec<u8>, ReOError> {
     let mut ara = File::open(ingoa_konae)?;
-    let mut ihirangi = String::new();
-    ara.read_to_string(&mut ihirangi)?;
+    let mut ihirangi = Vec::new();
+    ara.read_to_end(&mut ihirangi)?;
     Ok(ihirangi)
 }
 
@@ -159,5 +168,4 @@ pub fn tapirihia_raraunga(ingoa_konae: &str, raraunga: &str) -> Result<(), ReOEr
     ara.write_all(raraunga.as_bytes())?;
 
     Ok(())
-    
 }
