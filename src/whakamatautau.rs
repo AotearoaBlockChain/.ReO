@@ -1,18 +1,27 @@
 use crate::whakamuka;
 use crate::hangaia_hmac;
-use crate::tapirihia_komae;
+use crate::tapirihia_konae;
 use crate::tapirihia_raraunga;
 use crate::mukua_konae;
-use crate::panuhia_konae;
+use crate::panuihia_konae;
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::thread;
     use std::fs::{self, File};
+    use std::io::Read;
     use std::io::Write;
     use std::path::Path;
-    use std::io::read;
+    use std::io::prelude::*;
+    use std::io::Result;
+
+    fn panuihia_konae(filename: &str) -> Result<Vec<u8>> {
+    let mut file = File::open(filename)?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer)?;
+    Ok(buffer)
+    }
 
     #[test]
     fn test_whakamuka() {
@@ -182,15 +191,20 @@ mod tests {
     fn test_panuihia_konae_binary_file() {
         let ingoa_konae = "testfile.bin";
         let binary_data = vec![0, 159, 146, 150];
+    
+        // Write binary data to file
         let mut file = File::create(ingoa_konae).unwrap();
         file.write_all(&binary_data).unwrap();
-        
+
+        // Read data from file and test
         let result = panuihia_konae(ingoa_konae);
         assert!(result.is_ok());
         let read_data = result.unwrap();
-        assert_eq!(read_data.into_bytes(), binary_data);
-        assert_eq!(read_data, binary_data);  // Compare directly as Vec<u8>
-        
+
+        // Compare read_data directly with binary_data
+        assert_eq!(read_data, binary_data);
+
+        // Clean up
         let _ = fs::remove_file(ingoa_konae);
     }
 

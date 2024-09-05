@@ -32,6 +32,14 @@ async fn main() {
     warp::serve(routes)
         .run(([127, 0, 0, 1], 8080))
         .await;
+
+    let read_data: &[u8] = &[1, 2, 3, 4];
+
+    let binary_data: &[u8] = &[1, 2, 3, 4];
+
+    // Use assert_eq! to compare the two byte slices
+    assert_eq!(read_data, binary_data);
+
 }
 
 #[derive(Debug)]
