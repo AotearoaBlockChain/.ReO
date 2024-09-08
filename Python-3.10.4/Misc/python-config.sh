@@ -30,7 +30,7 @@ prefix_real=$(installed_prefix "$0")
 # locations. Keep prefix & exec_prefix using their original values in case
 # they are referenced in other configure variables, to prevent double
 # substitution, issue #22140.
-prefix="/data/data/com.termux/files/usr"
+prefix="/usr/local"
 exec_prefix="${prefix}"
 exec_prefix_real=${prefix_real}
 includedir=$(echo "${prefix}/include" | sed "s#$prefix#$prefix_real#")
@@ -44,9 +44,9 @@ ABIFLAGS=""
 LIBS="-lpython3.10 -lcrypt -ldl  -lm $SYSLIBS"
 LIBS_EMBED="-lpython${VERSION}${ABIFLAGS} -lcrypt -ldl  -lm $SYSLIBS"
 BASECFLAGS=" -mfloat-abi=softfp -mfpu=vfpv3-d16 -Wno-unused-result -Wsign-compare -Wunreachable-code"
-LDLIBRARY="libpython$(LDVERSION).so"
+LDLIBRARY="libpython$(VERSION)$(ABIFLAGS).a"
 OPT="-DNDEBUG -g -fwrapv -O3 -Wall"
-PY_ENABLE_SHARED="1"
+PY_ENABLE_SHARED="0"
 LDVERSION="$(VERSION)$(ABIFLAGS)"
 LIBDEST=${prefix_real}/lib/python${VERSION}
 LIBPL=$(echo "$(prefix)/lib/python3.10/config-$(VERSION)$(ABIFLAGS)" | sed "s#$prefix#$prefix_real#")

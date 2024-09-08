@@ -29,8 +29,8 @@ MODLIBS=           _MODLIBS_
 VERSION=	3.10
 srcdir=		.
 
-abs_srcdir=	/data/data/com.termux/files/home/reo/Python-3.10.4
-abs_builddir=	/data/data/com.termux/files/home/reo/Python-3.10.4
+abs_srcdir=	/data/data/com.termux/files/home/ABC/reo/Python-3.10.4
+abs_builddir=	/data/data/com.termux/files/home/ABC/reo/Python-3.10.4
 
 
 CC=		gcc
@@ -38,7 +38,7 @@ CXX=		g++
 MAINCC=		$(CC)
 LINKCC=		$(PURIFY) $(MAINCC)
 AR=		ar
-READELF=	:
+READELF=	readelf
 SOABI=		cpython-310
 LDVERSION=	$(VERSION)$(ABIFLAGS)
 LIBPYTHON=	-lpython3.10
@@ -55,7 +55,7 @@ DFLAGS=
 DTRACE_HEADERS= 
 DTRACE_OBJS=    
 
-GNULD=		no
+GNULD=		yes
 
 # Shell used by make (some versions default to the login shell, which is bad)
 SHELL=		/bin/sh
@@ -109,7 +109,7 @@ CCSHARED=	-fPIC
 LINKFORSHARED=	-Xlinker -export-dynamic
 ARFLAGS=	rcs
 # Extra C flags added for building the interpreter object files.
-CFLAGSFORSHARED=$(CCSHARED)
+CFLAGSFORSHARED=
 # C flags used for building the interpreter object files
 PY_STDMODULE_CFLAGS= $(PY_CFLAGS) $(PY_CFLAGS_NODIST) $(PY_CPPFLAGS) $(CFLAGSFORSHARED)
 PY_BUILTIN_MODULE_CFLAGS= $(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE_BUILTIN
@@ -128,7 +128,7 @@ MULTIARCH=
 MULTIARCH_CPPFLAGS = 
 
 # Install prefix for architecture-independent files
-prefix=		/data/data/com.termux/files/usr
+prefix=		/usr/local
 
 # Install prefix for architecture-dependent files
 exec_prefix=	${prefix}
@@ -195,15 +195,15 @@ LIPO_INTEL64_FLAGS=
 OTHER_LIBTOOL_OPT=
 
 # Environment to run shared python without installed libraries
-RUNSHARED=       LD_LIBRARY_PATH=/data/data/com.termux/files/home/reo/Python-3.10.4
+RUNSHARED=       
 
 # ensurepip options
 ENSUREPIP=      upgrade
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=
-OPENSSL_LIBS=
-OPENSSL_LDFLAGS=
+OPENSSL_INCLUDES=-I/data/data/com.termux/files/usr/include
+OPENSSL_LIBS=-lssl -lcrypto
+OPENSSL_LDFLAGS=-L/data/data/com.termux/files/usr/lib
 OPENSSL_RPATH=
 
 # Default zoneinfo.TZPATH. Added here to expose it in sysconfig.get_config_var
@@ -216,7 +216,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/data/data/com.termux/files/usr' '--enable-shared' '--with-openssl=/data/data/com.termux/files/usr/lib'
+CONFIG_ARGS=	
 
 
 # Subdirectories with code
@@ -233,14 +233,14 @@ DIST=		$(DISTFILES) $(DISTDIRS)
 
 
 LIBRARY=	libpython$(VERSION)$(ABIFLAGS).a
-LDLIBRARY=      libpython$(LDVERSION).so
-BLDLIBRARY=     -L. -lpython$(LDVERSION)
-PY3LIBRARY=     libpython3.so
+LDLIBRARY=      libpython$(VERSION)$(ABIFLAGS).a
+BLDLIBRARY=     $(LDLIBRARY)
+PY3LIBRARY=     
 DLLLIBRARY=	
 LDLIBRARYDIR=   
-INSTSONAME=	libpython$(LDVERSION).so.1.0
-LIBRARY_DEPS=	$(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY) $(EXPORTSYMS)
-PY_ENABLE_SHARED=	1
+INSTSONAME=	$(LDLIBRARY)
+LIBRARY_DEPS=	$(LIBRARY) $(PY3LIBRARY) $(EXPORTSYMS)
+PY_ENABLE_SHARED=	0
 STATIC_LIBPYTHON=	1
 
 
