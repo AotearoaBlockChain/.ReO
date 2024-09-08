@@ -20,4 +20,8 @@ hex = "0.4"
 name = "matua"
 path = "src/matua.rs"
 
+[lib]
+name = "ReO"
+path = "src/puna.rs"
+crate-type = ["cdylib", "rlib"]
 
