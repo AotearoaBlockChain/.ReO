@@ -15,6 +15,7 @@ mod tests {
     use std::path::Path;
     use std::io::prelude::*;
     use std::io::Result;
+    }
 
     fn panuihia_konae(filename: &str) -> Result<Vec<u8>> {
     let mut file = File::open(filename)?;
