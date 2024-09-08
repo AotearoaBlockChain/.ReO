@@ -21,7 +21,7 @@ name = "matua"
 path = "src/matua.rs"
 
 [lib]
-name = "ReO"
-path = "src/puna.rs"
+name = "poutaka"
+path = "src/poutaka.rs"
 crate-type = ["cdylib", "rlib"]
 

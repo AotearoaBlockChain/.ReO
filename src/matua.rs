@@ -9,6 +9,22 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 use hex;
 use warp::Filter;
+use std::env;
+use poutaka::run_script;  // Import the function from the library
+
+fn matua() {
+    let args: Vec<String> = env::args().collect();
+    if args.len() != 2 {
+        eprintln!("Usage: poutaka <script>");
+        std::process::exit(1);
+    }
+
+    let script_path = &args[1];
+    let script_content = fs::read_to_string(script_path)
+        .expect("Error reading script file");
+
+    run_script(&script_content);
+    }
 
 #[cfg(test)]
 mod whakamatautau;
