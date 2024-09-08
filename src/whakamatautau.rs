@@ -18,13 +18,6 @@ mod tests {
     // Now, you can write your tests here
     }
 
-    fn panuihia_konae(filename: &str) -> Result<Vec<u8>> {
-    let mut file = File::open(filename)?;
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer)?;
-    Ok(buffer)
-    }
-
     #[test]
     fn test_whakamuka() {
         let raraunga = "Hello, world!";
