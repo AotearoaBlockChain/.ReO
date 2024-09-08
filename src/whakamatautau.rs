@@ -33,12 +33,110 @@ mod tests {
     }
 
     #[test]
+fn test_concurrent_file_access() {
+    let ingoa_konae = "testfile_concurrent.txt";
+    let _ = File::create(ingoa_konae).expect("Failed to create file");
+
+    let handle1 = thread::spawn(move || {
+        tapirihia_raraunga(ingoa_konae, "Thread 1 data").unwrap();
+    });
+
+    let handle2 = thread::spawn(move || {
+        tapirihia_raraunga(ingoa_konae, "Thread 2 data").unwrap();
+    });
+
+    handle1.join().unwrap();
+    handle2.join().unwrap();
+
+    let result = panuihia_konae(ingoa_konae);
+    assert!(result.is_ok());
+    let file_content = String::from_utf8(result.unwrap()).unwrap();
+
+    assert!(file_content.contains("Thread 1 data"));
+    assert!(file_content.contains("Thread 2 data"));
+
+    let _ = fs::remove_file(ingoa_konae);
+    }
+
+    #[test]
+fn test_file_permissions_error() {
+    let ingoa_konae = "testfile_permissions.txt";
+    let _ = File::create(ingoa_konae).expect("Failed to create file");
+
+    // Set the file to read-only mode
+    let mut perms = fs::metadata(ingoa_konae).unwrap().permissions();
+    perms.set_readonly(true);
+    fs::set_permissions(ingoa_konae, perms).unwrap();
+
+    // Try writing to the file (should fail)
+    let result = tapirihia_raraunga(ingoa_konae, "Should fail to write");
+    assert!(result.is_err(), "Expected write to fail due to permissions");
+
+    // Clean up
+    perms.set_readonly(false);
+    fs::set_permissions(ingoa_konae, perms).unwrap();
+    let _ = fs::remove_file(ingoa_konae);
+    }
+
+    #[test]
+fn test_hangaia_hmac_invalid_key() {
+    let raraunga = "Hello, world!";
+    let ki = "\0";  // Invalid or non-printable key
+    let result = hangaia_hmac(ki, raraunga);
+    assert!(result.is_err(), "Expected an error with invalid key");
+    }
+
+    #[test]
+fn test_stress_create_and_delete_files() {
+    for i in 0..1000 {
+        let ingoa_konae = format!("testfile_{}.txt", i);
+        let result = tapirihia_konae(&ingoa_konae);
+        assert!(result.is_ok(), "File creation failed for {}", ingoa_konae);
+
+        let delete_result = mukua_konae(&ingoa_konae);
+        assert!(delete_result.is_ok(), "File deletion failed for {}", ingoa_konae);
+    }
+
+    #[test]
     fn test_whakamuka_empty() {
         let raraunga = "";
         let result = whakamuka(raraunga);
         assert!(result.is_ok());
         let hash = result.unwrap();
         assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+    }
+
+    #[test]
+fn test_partial_file_read() {
+    let ingoa_konae = "test_partial_read.txt";
+    let content = "This is a test file content for partial reading.";
+    let mut file = File::create(ingoa_konae).unwrap();
+    file.write_all(content.as_bytes()).unwrap();
+
+    let mut file = File::open(ingoa_konae).unwrap();
+    let mut buffer = vec![0; 10];  // Read only 10 bytes
+    file.read_exact(&mut buffer).unwrap();
+
+    assert_eq!(String::from_utf8(buffer).unwrap(), "This is a ");
+
+    let _ = fs::remove_file(ingoa_konae);
+    }
+
+    #[test]
+fn test_write_to_nonexistent_file() {
+    let ingoa_konae = "nonexistent_file.txt";
+    let result = tapirihia_raraunga(ingoa_konae, "Test data");
+    assert!(result.is_err(), "Expected error when writing to nonexistent file");
+}
+
+#[test]
+fn test_read_empty_file() {
+    let ingoa_konae = "empty_testfile.txt";
+    let _ = File::create(ingoa_konae).unwrap(); // Create an empty file
+    let result = panuihia_konae(ingoa_konae);
+    assert!(result.is_ok());
+    assert!(result.unwrap().is_empty(), "Expected empty content for empty file");
+    let _ = fs::remove_file(ingoa_konae);
     }
 
     #[test]
