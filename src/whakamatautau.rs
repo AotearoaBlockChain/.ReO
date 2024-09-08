@@ -4,6 +4,8 @@ use crate::tapirihia_konae;
 use crate::tapirihia_raraunga;
 use crate::mukua_konae;
 use crate::panuihia_konae;
+use crate::fs;
+use crate::File;
 
 #[cfg(test)]
 mod tests {
@@ -15,6 +17,9 @@ mod tests {
     use std::path::Path;
     use std::io::prelude::*;
     use std::io::Result;
+    use std::fs::File;
+    use ring::test::File;
+    use tokio::fs::File;
     }
 
     fn panuihia_konae(filename: &str) -> Result<Vec<u8>> {
