@@ -47,7 +47,7 @@ pub fn whakaatu_awhina() {
     println!("3. tango_tau <a> <b>");
     println!("4. whakanuia_tau <a> <b>");
     println!("5. wehe_tau <a> <b>");
-    println!("6. whakaatu_āwhina");
+    println!("6. whakaatu_awhina");
     }
 }
 
