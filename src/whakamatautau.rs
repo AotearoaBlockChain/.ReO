@@ -4,22 +4,18 @@ use crate::tapirihia_konae;
 use crate::tapirihia_raraunga;
 use crate::mukua_konae;
 use crate::panuihia_konae;
-use crate::fs;
-use crate::File;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::thread;
-    use std::fs::{self, File};
-    use std::io::Read;
-    use std::io::Write;
-    use std::path::Path;
-    use std::io::prelude::*;
-    use std::io::Result;
-    use std::fs::File;
-    use ring::test::File;
-    use tokio::fs::File;
+    use super::*; // Import everything from the parent module
+    use std::thread; // For concurrent operations
+    use std::fs::{self, File as StdFile}; // Rename standard `File` to avoid conflict
+    use std::io::{Read, Write, Result, prelude::*}; // For reading and writing files
+    use std::path::Path; // For path operations
+    use ring::test::File as RingFile; // Rename `ring::test::File`
+    use tokio::fs::File as TokioFile; // Rename `tokio::fs::File`
+
+    // Now, you can write your tests here
     }
 
     fn panuihia_konae(filename: &str) -> Result<Vec<u8>> {
