@@ -1,3 +1,5 @@
+mod whatunga;
+
 use ring::digest::{Context, SHA256};
 use ring::hmac;
 use ring::rand::{SecureRandom, SystemRandom};
@@ -11,6 +13,87 @@ use hex;
 use warp::Filter;
 use std::env;
 use poutaka::run_script;  // Import the function from the library
+use poutaka::{panui_karere, tapiiri_tau, tango_tau, whakanuia_tau, wehe_tau, whakaatu_awhina};
+use std::process;
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() < 2 {
+        eprintln!("Kaore he whakahau i tukuna.");
+        whakaatu_awhina();
+        process::exit(1);
+    }
+
+    match args[1].as_str() {
+        "panui_karere" => panui_karere(),
+        "tapiiri_tau" => {
+            if args.len() != 4 {
+                eprintln!("Kaore i te tika: {} tapiiri_tau <a> <b>", args[0]);
+                process::exit(1);
+            }
+            let a: i32 = args[2].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[2]);
+                process::exit(1);
+            });
+            let b: i32 = args[3].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[3]);
+                process::exit(1);
+            });
+            tapiiri_tau(a, b);
+        },
+        "tango_tau" => {
+            if args.len() != 4 {
+                eprintln!("Kaore i te tika: {} tango_tau <a> <b>", args[0]);
+                process::exit(1);
+            }
+            let a: i32 = args[2].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[2]);
+                process::exit(1);
+            });
+            let b: i32 = args[3].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[3]);
+                process::exit(1);
+            });
+            tango_tau(a, b);
+        },
+        "whakanuia_tau" => {
+            if args.len() != 4 {
+                eprintln!("Kaore i te tika: {} whakanuia_tau <a> <b>", args[0]);
+                process::exit(1);
+            }
+            let a: i32 = args[2].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[2]);
+                process::exit(1);
+            });
+            let b: i32 = args[3].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[3]);
+                process::exit(1);
+            });
+            whakanuia_tau(a, b);
+        },
+        "wehe_tau" => {
+            if args.len() != 4 {
+                eprintln!("Kaore i te tika: {} wehe_tau <a> <b>", args[0]);
+                process::exit(1);
+            }
+            let a: i32 = args[2].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[2]);
+                process::exit(1);
+            });
+            let b: i32 = args[3].parse().unwrap_or_else(|_| {
+                eprintln!("Tau kaore i te tika: {}", args[3]);
+                process::exit(1);
+            });
+            wehe_tau(a, b);
+        },
+        "whakaatu_awhina" => whakaatu_awhina(),
+        _ => {
+            eprintln!("Whakahau kaore i te mohiotia: {}", args[1]);
+            whakaatu_awhina();
+            process::exit(1);
+        },
+    }
 
 fn matua() {
     let args: Vec<String> = env::args().collect();
@@ -28,7 +111,6 @@ fn matua() {
 
 #[cfg(test)]
 mod whakamatautau;
-mod whatunga;
 
 #[tokio::main]
 async fn main() {
@@ -193,4 +275,5 @@ pub fn tapirihia_raraunga(ingoa_konae: &str, raraunga: &str) -> Result<(), ReOEr
     ara.write_all(raraunga.as_bytes())?;
 
     Ok(())
+    }
 }
