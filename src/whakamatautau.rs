@@ -10,17 +10,14 @@ mod tests {
     use super::*;
     use std::thread;
     use std::fs::{self, File};
-    use std::io::Read;
-    use std::io::Write;
+    use std::io::{Read, Write, Result};
     use std::path::Path;
-    use std::io::prelude::*;
-    use std::io::Result;
 
     fn panuihia_konae(filename: &str) -> Result<Vec<u8>> {
-    let mut file = File::open(filename)?;
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer)?;
-    Ok(buffer)
+        let mut file = File::open(filename)?;
+        let mut buffer = Vec::new();
+        file.read_to_end(&mut buffer)?;
+        Ok(buffer)
     }
 
     #[test]
@@ -213,20 +210,5 @@ mod tests {
         let ingoa_konae = "nonexistent.txt";
         let result = panuihia_konae(ingoa_konae);
         assert!(result.is_err()); // Expect an error because the file does not exist
-    }
-
-    fn test_panuihia_konae() {
-        let ingoa_konae = "testfile.txt";
-        let content = "This is a test file content.";
-        let mut file = File::create(ingoa_konae).unwrap();
-        file.write_all(content.as_bytes()).unwrap();
-        let result = panuihia_konae(ingoa_konae);
-        assert!(result.is_ok());
-
-        // Convert read_data (Vec<u8>) back to String for comparison
-        let read_data = String::from_utf8(result.unwrap()).unwrap();
-        assert_eq!(read_data, content);  // Compare as Strings
-
-        let _ = fs::remove_file(ingoa_konae);
     }
 }
