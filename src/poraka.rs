@@ -1,5 +1,3 @@
-// blockchain.rs
-
 extern crate sha2;
 use sha2::{Sha256, Digest};
 use std::fmt;
@@ -108,6 +106,6 @@ fn main() {
     if whatunga.he_tika_te_mekameka() {
         println!("Kei te tika te mekameka.");
     } else {
-        println!("Kāore i te tika te mekameka.");
+        println!("Kaore i te tika te mekameka.");
     }
 }
