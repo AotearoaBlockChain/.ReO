@@ -19,17 +19,20 @@ struct UrungaRaraunga {
 
 #[derive(Debug, Deserialize, Serialize)]
 struct UrungaHmac {
-    // Add relevant fields
+    message: String,
+    key: String, // Add relevant fields
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct UrungaWhakamuna {
     // Add relevant fields
+    data: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct UrungaWetekina {
     // Add relevant fields
+    data: String,
 }
 
 // Custom error type to implement `Reject` trait for warp rejection handling
@@ -65,8 +68,8 @@ async fn handle_rejection(err: warp::Rejection) -> Result<impl warp::Reply, warp
     }
 }
 
-#[allow(dead_code)]
 pub async fn run_server() {
+    // /whakamuka endpoint
     let aratuka_whakamuka = warp::path("whakamuka")
         .and(warp::body::json())
         .map(|body: UrungaRaraunga| {
@@ -74,9 +77,10 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received: {:?}", body),
             })
-        }) // Close the map and recover properly
-        .recover(handle_rejection);  // Add error recovery
+        })
+        .recover(handle_rejection); 
 
+    // /hmac endpoint
     let aratuka_hmac = warp::path("hmac")
         .and(warp::body::json())
         .map(|body: UrungaHmac| {
@@ -84,9 +88,10 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received HMAC: {:?}", body),
             })
-        }) // Close the map and recover properly
-        .recover(handle_rejection);  // Add error recovery
+        })
+        .recover(handle_rejection); 
 
+    // /hanga_ki endpoint
     let aratuka_hanga_ki = warp::path("hanga_ki")
         .and(warp::body::json())
         .map(|body: UrungaWhakamuna| {
@@ -94,9 +99,10 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received Whakamuna: {:?}", body),
             })
-        }) // Close the map and recover properly
-        .recover(handle_rejection);  // Add error recovery
+        })
+        .recover(handle_rejection); 
 
+    // /whakamuna endpoint
     let aratuka_whakamuna = warp::path("whakamuna")
         .and(warp::body::json())
         .map(|body: UrungaWetekina| {
@@ -104,15 +110,15 @@ pub async fn run_server() {
             warp::reply::json(&TauhoheApi {
                 hua: format!("Received Wetekina: {:?}", body),
             })
-        }) // Close the map and recover properly
-        .recover(handle_rejection);  // Add error recovery
+        })
+        .recover(handle_rejection); 
 
-    // Combine all routes ensuring they all return a valid Reply
+    // Combine all routes
     let aratuka = aratuka_whakamuka
         .or(aratuka_hmac)
         .or(aratuka_hanga_ki)
         .or(aratuka_whakamuna)
-        .recover(handle_rejection);  // Add global error recovery
+        .recover(handle_rejection); 
 
     // Start the server with all routes
     info!("API Server running at http://127.0.0.1:8080");
