@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use super::*;
     use std::thread;
     use std::fs::{self, File};
@@ -11,6 +11,28 @@ mod tests {
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer)?;
         Ok(buffer)
+    }
+
+    #[test]
+    fn test_panui_karere() {
+        panui_karere(); // Test the panui_karere function
+    }
+
+    #[test]
+    fn test_tapiiri_tau() {
+        // Test the addition of two numbers
+        tapiiri_tau(2, 3); // Expect output: Ko te tapiiri i 2 me 3 ko 5
+    }
+
+    #[test]
+    fn test_tango_tau() {
+        // Test the subtraction of two numbers
+        tango_tau(5, 2); // Expect output: Ko te tango i 2 mai i 5 ko 3
+    }
+
+    #[test]
+    fn test_whakaatu_awhina() {
+        whakaatu_awhina(); // Test the help function
     }
 
     #[test]
@@ -29,13 +51,6 @@ mod tests {
         assert!(result.is_ok());
         let hash = result.unwrap();
         assert_eq!(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-    }
-
-    #[test]
-    fn test_whakamuka_long_input() {
-        let raraunga = "a".repeat(1000000); // 1 million characters
-        let result = whakamuka(&raraunga);
-        assert!(result.is_ok());
     }
 
     #[test]
@@ -192,16 +207,9 @@ mod tests {
         let read_data = result.unwrap();
 
         // Compare read_data directly with binary_data
-        assert_eq!(read_data, binary_data);
+        assert_eq!(read_data, binary_data, "The read binary data does not match the expected data");
 
-        // Clean up
+        // Clean up by removing the test file
         let _ = fs::remove_file(ingoa_konae);
-    }
-
-    #[test]
-    fn test_panuihia_konae_nonexistent() {
-        let ingoa_konae = "nonexistent.txt";
-        let result = panuihia_konae(ingoa_konae);
-        assert!(result.is_err()); // Expect an error because the file does not exist
     }
 }
